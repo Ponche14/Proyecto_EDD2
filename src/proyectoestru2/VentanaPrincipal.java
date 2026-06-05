@@ -47,6 +47,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         CrearArchivoButton = new javax.swing.JButton();
         CerrarArchivoButton = new javax.swing.JButton();
         GuardarArchivoButton = new javax.swing.JButton();
+        CampoPanel = new javax.swing.JPanel();
+        CrearCampoButton = new javax.swing.JButton();
+        CampoVariable = new javax.swing.JButton();
+        ModificarCampoButton = new javax.swing.JButton();
+        EliminarCampoButton = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        TableCampos = new javax.swing.JTable();
         RegistroPanel = new javax.swing.JPanel();
         jScrollPane2 = new javax.swing.JScrollPane();
         RegistrosTable = new javax.swing.JTable();
@@ -56,13 +63,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         BuscarRegistroButton = new javax.swing.JButton();
         ModificarRegistroButton = new javax.swing.JButton();
         ListarRegistroButton = new javax.swing.JButton();
-        CampoPanel = new javax.swing.JPanel();
-        CrearCampoButton = new javax.swing.JButton();
-        CampoVariable = new javax.swing.JButton();
-        ModificarCampoButton = new javax.swing.JButton();
-        EliminarCampoButton = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        TableCampos = new javax.swing.JTable();
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -239,6 +239,76 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         PanelPrincipal.addTab("Archivos", ArchivoPanel);
 
+        CampoPanel.setBackground(new java.awt.Color(204, 204, 204));
+
+        CrearCampoButton.setText("Crear Campo");
+        CrearCampoButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CrearCampoButtonMouseClicked(evt);
+            }
+        });
+
+        CampoVariable.setText("CampoVariable");
+
+        ModificarCampoButton.setText("Modificar Campo");
+        ModificarCampoButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ModificarCampoButtonMouseClicked(evt);
+            }
+        });
+
+        EliminarCampoButton.setText("Eliminar Campo");
+        EliminarCampoButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                EliminarCampoButtonMouseClicked(evt);
+            }
+        });
+
+        TableCampos.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(TableCampos);
+
+        javax.swing.GroupLayout CampoPanelLayout = new javax.swing.GroupLayout(CampoPanel);
+        CampoPanel.setLayout(CampoPanelLayout);
+        CampoPanelLayout.setHorizontalGroup(
+            CampoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CampoPanelLayout.createSequentialGroup()
+                .addGap(70, 70, 70)
+                .addGroup(CampoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(CrearCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(CampoVariable, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ModificarCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(EliminarCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(27, 27, 27)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+        CampoPanelLayout.setVerticalGroup(
+            CampoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(CampoPanelLayout.createSequentialGroup()
+                .addGap(70, 70, 70)
+                .addComponent(CrearCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(9, 9, 9)
+                .addComponent(CampoVariable, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(9, 9, 9)
+                .addComponent(ModificarCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(9, 9, 9)
+                .addComponent(EliminarCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(CampoPanelLayout.createSequentialGroup()
+                .addGap(20, 20, 20)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        PanelPrincipal.addTab("Campos", CampoPanel);
+
         RegistroPanel.setBackground(new java.awt.Color(204, 204, 204));
 
         RegistrosTable.setModel(new javax.swing.table.DefaultTableModel(
@@ -303,71 +373,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         );
 
         PanelPrincipal.addTab("Registros", RegistroPanel);
-
-        CampoPanel.setBackground(new java.awt.Color(204, 204, 204));
-
-        CrearCampoButton.setText("Crear Campo");
-        CrearCampoButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                CrearCampoButtonMouseClicked(evt);
-            }
-        });
-
-        CampoVariable.setText("CampoVariable");
-
-        ModificarCampoButton.setText("Modificar Campo");
-
-        EliminarCampoButton.setText("Eliminar Campo");
-        EliminarCampoButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                EliminarCampoButtonMouseClicked(evt);
-            }
-        });
-
-        TableCampos.setModel(new javax.swing.table.DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
-            }
-        ));
-        jScrollPane1.setViewportView(TableCampos);
-
-        javax.swing.GroupLayout CampoPanelLayout = new javax.swing.GroupLayout(CampoPanel);
-        CampoPanel.setLayout(CampoPanelLayout);
-        CampoPanelLayout.setHorizontalGroup(
-            CampoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CampoPanelLayout.createSequentialGroup()
-                .addGap(70, 70, 70)
-                .addGroup(CampoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(CrearCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(CampoVariable, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ModificarCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(EliminarCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 193, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(27, 27, 27)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 640, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-        CampoPanelLayout.setVerticalGroup(
-            CampoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(CampoPanelLayout.createSequentialGroup()
-                .addGap(70, 70, 70)
-                .addComponent(CrearCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
-                .addComponent(CampoVariable, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
-                .addComponent(ModificarCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
-                .addComponent(EliminarCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(CampoPanelLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE))
-        );
-
-        PanelPrincipal.addTab("Campos", CampoPanel);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -453,6 +458,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_GuardarArchivoButtonMouseClicked
 
     private void CrearCampoButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CrearCampoButtonMouseClicked
+        if (!dbms.isArchivoAbierto()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Se debe crear o abrir un archivo antes de crear campos.", "No hay archivo", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         CrearCampoFrame.pack();
         CrearCampoFrame.setSize(525, 250);
         CrearCampoFrame.setLocationRelativeTo(this);
@@ -480,7 +489,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_CancelarCampoButtonFrameMouseClicked
 
     private void CrearCampoButtonFrameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CrearCampoButtonFrameMouseClicked
-    String nombre = NombreCampoTextField.getText();
+        String nombre = NombreCampoTextField.getText().trim();
+        if (nombre.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(CrearCampoFrame, "El nombre del campo no puede estar vacio", "Error (No hay nombre)" , javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         char tipo;
         boolean esPrimaria = PrimariaCampoCheckBox.isSelected(); 
         boolean esSecundaria = SecundariaCampoCheckBox.isSelected();
@@ -525,16 +538,41 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_CrearCampoButtonFrameMouseClicked
 
     private void EliminarCampoButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_EliminarCampoButtonMouseClicked
-        DefaultTableModel modelo = (DefaultTableModel) TableCampos.getModel();
-        if (TableCampos.getSelectedRow() >= 0) {
-            int fila = TableCampos.getSelectedRow();
-            modelo.removeRow(fila);
-            TableCampos.setModel(modelo);
+        if (!dbms.isArchivoAbierto()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Se debe crear o abrir un archivo antes de eliminar campos.", "No hay archivo", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int fila = TableCampos.getSelectedRow();
+        if (fila >= 0) {
+            dbms.getListaCampos().remove(fila);
+            ActualizarTablaCampos();
             JOptionPane.showMessageDialog(this, "Campo eliminado con exito");
-        } else{
+        }else{
             JOptionPane.showMessageDialog(this, "No tiene ningun campo seleccionado");
         }
+//        DefaultTableModel modelo = (DefaultTableModel) TableCampos.getModel();
+//        if (TableCampos.getSelectedRow() >= 0) {
+//            int fila = TableCampos.getSelectedRow();
+//            modelo.removeRow(fila);
+//            TableCampos.setModel(modelo);
+//            JOptionPane.showMessageDialog(this, "Campo eliminado con exito");
+//        } else{
+//            JOptionPane.showMessageDialog(this, "No tiene ningun campo seleccionado");
+//        }
     }//GEN-LAST:event_EliminarCampoButtonMouseClicked
+
+    private void ModificarCampoButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ModificarCampoButtonMouseClicked
+        if (!dbms.isArchivoAbierto()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Se debe crear o abrir un archivo antes de modificar campos.", "No hay archivo", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        int fila = TableCampos.getSelectedRow();
+        if (fila == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Se debe seleccionar un campo de la tabla para modificar", "Ningun campo seleccionado", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        Campo campoAModificar = dbms.getListaCampos().get(fila);
+    }//GEN-LAST:event_ModificarCampoButtonMouseClicked
 
     
    public void ActualizarTablaCampos() {
@@ -578,7 +616,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             logger.log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-// hola soy gerardo
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> new VentanaPrincipal().setVisible(true));
     }
