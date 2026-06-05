@@ -1,6 +1,9 @@
 
 package proyectoestru2;
 
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 public class VentanaPrincipal extends javax.swing.JFrame {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName());
@@ -59,7 +62,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         ModificarCampoButton = new javax.swing.JButton();
         EliminarCampoButton = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        TableCampos = new javax.swing.JTable();
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -315,8 +318,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         ModificarCampoButton.setText("Modificar Campo");
 
         EliminarCampoButton.setText("Eliminar Campo");
+        EliminarCampoButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                EliminarCampoButtonMouseClicked(evt);
+            }
+        });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        TableCampos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
                 {null, null, null, null},
@@ -327,7 +335,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
-        jScrollPane1.setViewportView(jTable1);
+        jScrollPane1.setViewportView(TableCampos);
 
         javax.swing.GroupLayout CampoPanelLayout = new javax.swing.GroupLayout(CampoPanel);
         CampoPanel.setLayout(CampoPanelLayout);
@@ -516,9 +524,21 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         javax.swing.JOptionPane.showMessageDialog(this, "¡Campo creado con exito!");
     }//GEN-LAST:event_CrearCampoButtonFrameMouseClicked
 
+    private void EliminarCampoButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_EliminarCampoButtonMouseClicked
+        DefaultTableModel modelo = (DefaultTableModel) TableCampos.getModel();
+        if (TableCampos.getSelectedRow() >= 0) {
+            int fila = TableCampos.getSelectedRow();
+            modelo.removeRow(fila);
+            TableCampos.setModel(modelo);
+            JOptionPane.showMessageDialog(this, "Campo eliminado con exito");
+        } else{
+            JOptionPane.showMessageDialog(this, "No tiene ningun campo seleccionado");
+        }
+    }//GEN-LAST:event_EliminarCampoButtonMouseClicked
+
     
    public void ActualizarTablaCampos() {
-        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) jTable1.getModel();
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) TableCampos.getModel();
         modelo.setRowCount(0);
 
         for (Campo c : dbms.getListaCampos()) {
@@ -592,11 +612,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel RegistroPanel;
     private javax.swing.JTable RegistrosTable;
     private javax.swing.JCheckBox SecundariaCampoCheckBox;
+    private javax.swing.JTable TableCampos;
     private javax.swing.JComboBox<String> TipoCampoComboBox;
     private javax.swing.JLabel TipoCampoLabel;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     // End of variables declaration//GEN-END:variables
 }
