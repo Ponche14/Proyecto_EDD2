@@ -325,16 +325,41 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jScrollPane2.setViewportView(RegistrosTable);
 
         BorrarRegistroButton.setText("Borrar Registro");
+        BorrarRegistroButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BorrarRegistroButtonMouseClicked(evt);
+            }
+        });
 
         CargarRegistrosPruebaButton.setText("Cargar Registros Prueba");
 
         InsertarRegistroButton.setText("Insertar Registro");
+        InsertarRegistroButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                InsertarRegistroButtonMouseClicked(evt);
+            }
+        });
 
         BuscarRegistroButton.setText("Buscar Registro");
+        BuscarRegistroButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                BuscarRegistroButtonMouseClicked(evt);
+            }
+        });
 
         ModificarRegistroButton.setText("Modificar Registro");
+        ModificarRegistroButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ModificarRegistroButtonMouseClicked(evt);
+            }
+        });
 
         ListarRegistroButton.setText("Listar Registro");
+        ListarRegistroButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ListarRegistroButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout RegistroPanelLayout = new javax.swing.GroupLayout(RegistroPanel);
         RegistroPanel.setLayout(RegistroPanelLayout);
@@ -574,8 +599,221 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         Campo campoAModificar = dbms.getListaCampos().get(fila);
     }//GEN-LAST:event_ModificarCampoButtonMouseClicked
 
+    private void BuscarRegistroButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BuscarRegistroButtonMouseClicked
+        String llaveABuscar = javax.swing.JOptionPane.showInputDialog(this, 
+        "Ingresa la Llave Primaria del registro que deseas buscar:", 
+        "Buscar Registro", javax.swing.JOptionPane.QUESTION_MESSAGE);
+
+        if (llaveABuscar == null || llaveABuscar.trim().isEmpty()) {
+            System.out.println("Búsqueda cancelada o vacía.");
+            return;
+        }
+
+        System.out.println("Buscando la llave: '" + llaveABuscar.trim() + "'");
+
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
+        boolean encontrado = false;
     
-   public void ActualizarTablaCampos() {
+        System.out.println("Filas totales en la tabla actualmente: " + modelo.getRowCount());
+
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            if (modelo.getValueAt(i, 0) == null) {
+                System.out.println("La fila " + i + " en la columna 0 está vacía (null).");
+                continue;
+            }
+
+            String llaveActual = modelo.getValueAt(i, 0).toString().trim();
+            System.out.println("Comparando con fila " + i + ", llave actual en tabla: '" + llaveActual + "'");
+
+            if (llaveActual.equalsIgnoreCase(llaveABuscar.trim())) {
+                RegistrosTable.setRowSelectionInterval(i, i);
+                RegistrosTable.scrollRectToVisible(RegistrosTable.getCellRect(i, 0, true));
+
+                encontrado = true;
+                System.out.println("¡Llave encontrada en la fila " + i + "!");
+                javax.swing.JOptionPane.showMessageDialog(this, 
+                    "¡Registro encontrado y seleccionado en la tabla!", 
+                    "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                break; 
+            }
+        }
+
+        if (!encontrado) {
+            System.out.println("No se encontró coincidencia en ninguna fila.");
+            javax.swing.JOptionPane.showMessageDialog(this, 
+            "No se encontró ningún registro con la llave: " + llaveABuscar, 
+            "No Encontrado", javax.swing.JOptionPane.WARNING_MESSAGE);
+        }
+    }//GEN-LAST:event_BuscarRegistroButtonMouseClicked
+
+    private void InsertarRegistroButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InsertarRegistroButtonMouseClicked
+        if (dbms.getListaCampos() == null || dbms.getListaCampos().isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+            "Primero debes definir los campos del archivo en la pestaña Campos.", 
+            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        StringBuilder registroEstructurado = new StringBuilder();
+        Object[] filaTabla = new Object[dbms.getListaCampos().size()];
+
+        for (int i = 0; i < dbms.getListaCampos().size(); i++) {
+            Campo cp = dbms.getListaCampos().get(i); 
+            String nombreCampo = cp.getNombre(); 
+            int longitudMaxima = cp.getLongitud(); 
+
+            String entradaUsuario = javax.swing.JOptionPane.showInputDialog(this, 
+                "Ingrese el valor para el campo: " + nombreCampo.toUpperCase() + 
+                "\n(Longitud maxima: " + longitudMaxima + " caracteres)", 
+                "Insertar Registro", javax.swing.JOptionPane.QUESTION_MESSAGE);
+
+            if (entradaUsuario == null) {
+                return; 
+            }
+
+            if (entradaUsuario.length() > longitudMaxima) {
+                entradaUsuario = entradaUsuario.substring(0, longitudMaxima);
+            } else {
+                while (entradaUsuario.length() < longitudMaxima) {
+                entradaUsuario += " ";
+                }
+            }
+
+            registroEstructurado.append(entradaUsuario);
+            filaTabla[i] = entradaUsuario.trim();
+        }
+
+        try {
+            boolean exito = dbms.escribirRegistro(registroEstructurado.toString());
+        
+            if (exito) {
+                javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
+                modelo.addRow(filaTabla);
+
+                javax.swing.JOptionPane.showMessageDialog(this, 
+                    "Registro insertado y guardado correctamente", 
+                    "Exito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, 
+                    "El registro no se pudo escribir en el archivo.", 
+                    "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            }
+        
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Ocurrio un error al procesar el archivo: " + e.getMessage(), 
+                "Error de Archivo", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_InsertarRegistroButtonMouseClicked
+
+    private void BorrarRegistroButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BorrarRegistroButtonMouseClicked
+        int filaSeleccionada = RegistrosTable.getSelectedRow();
+
+        if (filaSeleccionada == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+            "Por favor, selecciona el registro que deseas borrar en la tabla.", 
+            "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
+        String llavePrimaria = modelo.getValueAt(filaSeleccionada, 0).toString();
+
+        int confirmar = javax.swing.JOptionPane.showConfirmDialog(this, 
+            "¿Estás seguro de que deseas eliminar el registro con llave: " + llavePrimaria + "?", 
+            "Confirmar Eliminación", javax.swing.JOptionPane.YES_NO_OPTION);
+
+        if (confirmar == javax.swing.JOptionPane.YES_OPTION) {
+            modelo.removeRow(filaSeleccionada);
+            javax.swing.JOptionPane.showMessageDialog(this, "Registro eliminado de la vista.");
+        }
+        boolean borradoExitoso = dbms.borrarRegistroLogico(llavePrimaria);
+        if (borradoExitoso) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+            "El registro con llave '" + llavePrimaria + "' fue eliminado correctamente del archivo.", 
+            "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+            "No se pudo eliminar el registro del archivo físico.", 
+            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_BorrarRegistroButtonMouseClicked
+
+    private void ModificarRegistroButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ModificarRegistroButtonMouseClicked
+        int filaSeleccionada = RegistrosTable.getSelectedRow();
+
+        if (filaSeleccionada == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+            "Por favor, selecciona el registro que deseas modificar en la tabla.", 
+            "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
+        String llavePrimaria = modelo.getValueAt(filaSeleccionada, 0).toString();
+        String registroModificado = llavePrimaria; 
+    
+        for (int i = 1; i < dbms.getListaCampos().size(); i++) {
+            Campo c = dbms.getListaCampos().get(i);
+            String valorActual = modelo.getValueAt(filaSeleccionada, i).toString();
+
+            String nuevoValor = javax.swing.JOptionPane.showInputDialog(this, 
+                "Modificando el campo '" + c.getNombre() + "'\nValor actual: " + valorActual, 
+                valorActual);
+
+            if (nuevoValor == null || nuevoValor.trim().isEmpty()) {
+                nuevoValor = valorActual;
+            }
+
+            modelo.setValueAt(nuevoValor, filaSeleccionada, i);
+            registroModificado += "," + nuevoValor;
+        }
+        boolean modificacionExitosa = dbms.modificarRegistroFisico(llavePrimaria, registroModificado);
+
+        if (modificacionExitosa) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "El registro con llave '" + llavePrimaria + "' fue modificado correctamente en el archivo.", 
+                "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "No se pudo modificar el registro en el archivo físico.", 
+                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_ModificarRegistroButtonMouseClicked
+
+    private void ListarRegistroButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ListarRegistroButtonMouseClicked
+        try {
+            javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
+            modelo.setRowCount(0);
+
+            java.io.RandomAccessFile archivo = dbms.getArchivoActual();
+            if (archivo == null) {
+                javax.swing.JOptionPane.showMessageDialog(this, 
+                    "No hay ningún archivo abierto para listar los registros.", 
+                    "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+                return;
+            }
+
+            archivo.seek(0);
+            String linea;
+
+            while ((linea = archivo.readLine()) != null) {
+                if (!linea.startsWith("*") && !linea.trim().isEmpty()) {
+                    String[] datosRegistro = linea.split(",");
+                    modelo.addRow(datosRegistro);
+                }
+            }
+
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Registros actualizados correctamente desde el archivo físico.", 
+                "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Error al leer los registros del archivo: " + e.getMessage(), 
+                "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+        }
+    }//GEN-LAST:event_ListarRegistroButtonMouseClicked
+    
+    public void ActualizarTablaCampos() {
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) TableCampos.getModel();
         modelo.setRowCount(0);
 

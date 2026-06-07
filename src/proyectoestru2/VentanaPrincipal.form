@@ -507,6 +507,9 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Borrar Registro"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="BorrarRegistroButtonMouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="CargarRegistrosPruebaButton">
               <Properties>
@@ -517,21 +520,33 @@
               <Properties>
                 <Property name="text" type="java.lang.String" value="Insertar Registro"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="InsertarRegistroButtonMouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="BuscarRegistroButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Buscar Registro"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="BuscarRegistroButtonMouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="ModificarRegistroButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Modificar Registro"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ModificarRegistroButtonMouseClicked"/>
+              </Events>
             </Component>
             <Component class="javax.swing.JButton" name="ListarRegistroButton">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Listar Registro"/>
               </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ListarRegistroButtonMouseClicked"/>
+              </Events>
             </Component>
           </SubComponents>
         </Container>
