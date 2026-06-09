@@ -3,11 +3,11 @@ package proyectoestru2;
 
 public class AvailList {
     private NodoAvail head;
-
+    
     public AvailList() {
         this.head = null;
     }
-    //Aun falta el metodo de best fit, eliminar, y completar insercion
+    //Insercion ordenada de menor a mayor
     public void Insertar(long offset, int tamano){
         NodoAvail nodo = new NodoAvail(offset, tamano);
         // Si el archivo estaba vacio
@@ -40,35 +40,34 @@ public class AvailList {
     
     public NodoAvail obtenerBestFit(int tamanoRequerido){
         NodoAvail actual = head;
-        //La lista ya esta ordenada a menor a mayor, el primer nodo que sea mayor o igual es el best fit
         while(actual != null){
             if (actual.getTamano() >= tamanoRequerido) {
-                //Desvincular el nodo
-                if (actual == head) {
-                    head = actual.getSiguiente();
-                    if (head != null) {
-                        head.setAnterior(null);
-                    }
-                }else{
-                    //Si esta en medio o final
-                    if (actual.getAnterior() != null) {
-                        actual.getAnterior().setSiguiente(actual.getSiguiente());
-                    }
-                    if (actual.getSiguiente() != null) {
-                        actual.getSiguiente().setAnterior(actual.getAnterior());
-                    }
-                }
-                //Aislar el nodo
-                actual.setSiguiente(null);
-                actual.setAnterior(null);
+                desvincular(actual);
                 return actual;
             }
             actual = actual.getSiguiente();
         }
-        return null;
+        return null; // No hay un espacio donde quepa el registro
+    }
+    //Remueve el nodo de la lista en memoria cuando va a ser reutilizado
+    public void desvincular(NodoAvail nodo){
+        if (nodo == head) {
+            head = nodo.getSiguiente();
+            if (head != null) {
+                head.setAnterior(null);
+            }
+        }else{
+            if (nodo.getAnterior() != null) {
+                nodo.getAnterior().setSiguiente(nodo.getSiguiente());
+            }
+            if (nodo.getSiguiente() != null) {
+                nodo.getSiguiente().setAnterior(nodo.getAnterior());
+            }
+        }
+        nodo.setSiguiente(null);
+        nodo.setAnterior(null);
     }
     
-    //RECONSTRUCCION
     public void guardarEnArchivo(java.io.RandomAccessFile file, Metadata meta) throws java.io.IOException {
         if (head == null) {
             meta.setHeadAvaiList(-1);
@@ -78,14 +77,18 @@ public class AvailList {
         NodoAvail actual = head;
         while(actual != null){
             file.seek(actual.getOffset());
+            long sigOffset = (actual.getSiguiente() != null ? actual.getSiguiente().getOffset() : -1);
+            //*[SiguienteOffset] [Tamaño]
+            String infoEliminada = "*" + sigOffset  + "," + actual.getTamano();
+            file.writeBytes(infoEliminada);
             
-            file.writeChar('*');
-            if (actual.getSiguiente() != null) {
-                file.writeLong(actual.getSiguiente().getOffset());
-            }else{
-                file.writeLong(-1);
+            //Calcular cuantos bytes quedan libres en el slot
+            int bytesEscritos = infoEliminada.length();
+            int restante = actual.getTamano() - bytesEscritos;
+            
+            for (int i = 0; i < restante; i++) {
+                file.writeByte(' ');
             }
-            file.writeInt(actual.getTamano());
             actual = actual.getSiguiente();
         }
     }
@@ -96,11 +99,14 @@ public class AvailList {
         
         while (siguienteOffset != -1){
             file.seek(siguienteOffset);
-            
-            char borrado = file.readChar();
-            if (borrado == '*') {
-                long apuntadorSiguiente = file.readLong();
-                int tamanoEspacio = file.readInt();
+            String linea = file.readLine();
+            if (linea != null && linea.startsWith("*")) {
+                //Se eliminan los espacios finales que se usaron de relleno
+                String limpia = linea.trim();
+                String contenido = limpia.substring(1);//Elimina el *
+                String[] partes = contenido.split(",");
+                long apuntadorSiguiente = Long.parseLong(partes[0]);
+                int tamanoEspacio = Integer.parseInt(partes[1]);
                 
                 this.Insertar(siguienteOffset, tamanoEspacio);
                 siguienteOffset = apuntadorSiguiente;

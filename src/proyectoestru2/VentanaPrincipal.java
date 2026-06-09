@@ -433,6 +433,21 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             if (dbms.abrirArchivo(ruta)) {
                 javax.swing.JOptionPane.showMessageDialog(this, "Archivo abierto correctamente.");
                 actualizarEstadoArchivo(ruta);
+                
+                try {
+                    javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
+                    modelo.setColumnCount(0);
+                    modelo.setRowCount(0);
+                    
+                    java.util.ArrayList<Campo> camposCargados = dbms.getMetadataActual().getCampos();
+                    for (Campo c : camposCargados) {
+                        modelo.addColumn(c.getNombre().toUpperCase());
+                    }
+                    
+                    ListarRegistroButtonMouseClicked(null);
+                } catch (Exception e) {
+                    System.out.println("Archivo abierto pero hubo problema con la tabla " + e.getMessage());
+                }
             }else{
                 javax.swing.JOptionPane.showMessageDialog(this, "Error al intentar abrir el archivo.");
                 actualizarEstadoArchivo(null);
@@ -550,6 +565,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         Campo nuevoCampo = new Campo(nombre, tipo, longitud, esPrimaria, esSecundaria);
         dbms.getListaCampos().add(nuevoCampo);
         
+        dbms.getMetadataActual().getCampos().add(nuevoCampo);
+        Nodo nuevoNodo = new Nodo(nuevoCampo, null, null);
+        Nodo actual = head;
+        while (actual.getNext() != null) {
+            actual = actual.getNext();
+        }
+        actual.setNext(nuevoNodo);
+        nuevoNodo.setPrev(actual);
         
         NombreCampoTextField.setText("");
         TipoCampoComboBox.setSelectedIndex(0);
@@ -558,7 +581,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         
         CrearCampoFrame.setVisible(false);
         ActualizarTablaCampos();
-        
+          
         javax.swing.JOptionPane.showMessageDialog(this, "¡Campo creado con exito!");
     }//GEN-LAST:event_CrearCampoButtonFrameMouseClicked
 
@@ -647,17 +670,17 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_BuscarRegistroButtonMouseClicked
 
     private void InsertarRegistroButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_InsertarRegistroButtonMouseClicked
-        if (dbms.getListaCampos() == null || dbms.getListaCampos().isEmpty()) {
+        if (dbms.getListaCampos() == null || dbms.getMetadataActual().getCampos().isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(this, 
             "Primero debes definir los campos del archivo en la pestaña Campos.", 
             "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
-
+        java.util.ArrayList<Campo> listaCamposActuales = dbms.getMetadataActual().getCampos();
         StringBuilder registroEstructurado = new StringBuilder();
-        Object[] filaTabla = new Object[dbms.getListaCampos().size()];
+        Object[] filaTabla = new Object[listaCamposActuales.size()];
 
-        for (int i = 0; i < dbms.getListaCampos().size(); i++) {
+        for (int i = 0; i < listaCamposActuales.size(); i++) {
             Campo cp = dbms.getListaCampos().get(i); 
             String nombreCampo = cp.getNombre(); 
             int longitudMaxima = cp.getLongitud(); 
@@ -687,12 +710,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             boolean exito = dbms.escribirRegistro(registroEstructurado.toString());
         
             if (exito) {
-                javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
-                modelo.addRow(filaTabla);
-
-                javax.swing.JOptionPane.showMessageDialog(this, 
-                    "Registro insertado y guardado correctamente", 
-                    "Exito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                javax.swing.table.DefaultTableModel modeloRegistros = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
+                modeloRegistros.addRow(filaTabla);
             } else {
                 javax.swing.JOptionPane.showMessageDialog(this, 
                     "El registro no se pudo escribir en el archivo.", 
@@ -792,14 +811,33 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 return;
             }
 
-            archivo.seek(0);
+            java.util.ArrayList<Campo> campos = dbms.getMetadataActual().getCampos();
+            if (campos.isEmpty()) {
+                return;
+            }
+            
+            archivo.seek(dbms.getMetadataActual().getOffsetInicio());
             String linea;
 
             while ((linea = archivo.readLine()) != null) {
                 if (!linea.startsWith("*") && !linea.trim().isEmpty()) {
-                    String[] datosRegistro = linea.split(",");
-                    modelo.addRow(datosRegistro);
+                    continue;
                 }
+                Object[] datosRegistro = new Object[campos.size()];
+                int indiceaActual = 0;
+                
+                for (int i = 0; i < campos.size(); i++) {
+                    int longitud = campos.get(i).getLongitud();
+                    
+                    if (indiceaActual + longitud <= linea.length()) {
+                        String valorCampo = linea.substring(indiceaActual, indiceaActual + longitud);
+                        datosRegistro[i] = valorCampo.trim();
+                        indiceaActual += longitud;
+                    }else{
+                        datosRegistro[i] = "";
+                    }
+                }
+                modelo.addRow(datosRegistro);
             }
 
             javax.swing.JOptionPane.showMessageDialog(this, 
@@ -834,6 +872,55 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             modelo.addRow(fila);
         }
     }
+    
+    private void sincronizarArchivoATablas() {
+        if (!dbms.isArchivoAbierto()) {
+            return;
+        }
+        
+        DefaultTableModel modeloCampos = (DefaultTableModel) TableCampos.getModel();
+        modeloCampos.setRowCount(0);
+        java.util.ArrayList<Campo> camposCargados = dbms.getMetadataActual().getCampos();
+        for (Campo c : camposCargados) {
+            modeloCampos.addRow(new Object[]{
+                c.getNombre(), c.getTipo(), c.getLongitud(), c.isEsPrimaria(), c.isEsSecundaria()
+            });
+        }
+        
+        DefaultTableModel modeloRegistros = new DefaultTableModel();
+        for (Campo c : camposCargados) {
+            modeloRegistros.addColumn(c.getNombre());
+        }
+        
+        try {
+            java.io.RandomAccessFile file = dbms.getArchivoActual();
+            Metadata meta = dbms.getMetadataActual();
+            
+            file.seek(meta.getOffsetInicio());
+            String linea;
+            
+            while ((linea = file.readLine()) != null){
+                if (!linea.startsWith("*") && !linea.trim().isEmpty()) {
+                    String[] filaDatos = new String[camposCargados.size()];
+                    int inicioParte = 0;
+                    for (int i = 0; i < camposCargados.size(); i++) {
+                        Campo c = camposCargados.get(i);
+                        int finalParte = Math.min(inicioParte + c.getLongitud(), linea.length());
+                        if (inicioParte < linea.length()) {
+                            filaDatos[i] = linea.substring(inicioParte, finalParte).trim();
+                        }else{
+                            filaDatos[i] = "";
+                        }
+                        inicioParte += c.getLongitud();
+                    }
+                    modeloRegistros.addRow(filaDatos);
+                }
+            }
+        } catch (Exception e) {
+            System.out.println("Error al cargar registro jtable" + e.getMessage());
+        }
+        RegistrosTable.setModel(modeloCampos);
+   }
     /**
      * @param args the command line arguments
      */

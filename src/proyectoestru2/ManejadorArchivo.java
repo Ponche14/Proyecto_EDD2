@@ -8,6 +8,7 @@ public class ManejadorArchivo {
     private RandomAccessFile archivoActual;
     private Metadata metadataActual;
     private java.util.ArrayList<Campo> listaCampos = new java.util.ArrayList<>();
+    private AvailList availListActual = new AvailList();
 
     public ManejadorArchivo() {
         this.archivoActual = null;
@@ -35,7 +36,6 @@ public class ManejadorArchivo {
             if (archivoActual != null) {
                 cerrarArchivo();
             }
-            
             File f = new File(path);
             if (!f.exists()) {
                 return false;
@@ -43,6 +43,11 @@ public class ManejadorArchivo {
             this.archivoActual = new RandomAccessFile(f, "rw");
             this.metadataActual = new Metadata();
             this.metadataActual.cargar(archivoActual);
+            
+            //Cargar los espacios disponibles en la memoria
+            this.availListActual = new AvailList();
+            this.availListActual.cargarDesdeArchivo(archivoActual, metadataActual);
+            
             return true;
     
         } catch (Exception e) {
@@ -54,12 +59,12 @@ public class ManejadorArchivo {
         try {
             if (archivoActual != null) {
                 if (metadataActual != null) {
+                    availListActual.guardarEnArchivo(archivoActual, metadataActual);
                     metadataActual.guardar(archivoActual);
                 }
                 archivoActual.close();
                 archivoActual = null;
                 metadataActual = null;
-                listaCampos.clear();
                 return true;
             }
             return false;
@@ -67,15 +72,50 @@ public class ManejadorArchivo {
             return false;
         }
     }
-    
+    //Escritura con best fit
     public boolean escribirRegistro(String registro) {
         try {
-            if (this.archivoActual != null) {
-                this.archivoActual.seek(this.archivoActual.length());
-                this.archivoActual.writeBytes(registro + "\n");
-                return true;
+            if (this.archivoActual == null) {
+                return false;
             }
-            return false;
+            String cadenaEscribir = registro + "\n";
+            int tamanoRequerido = cadenaEscribir.length();
+            
+            //Buscar un espacio vacio en la availlist
+            NodoAvail espacioDisponible = availListActual.obtenerBestFit(tamanoRequerido);
+            long posicionEscritura;
+            
+            if (espacioDisponible != null) {
+                posicionEscritura = espacioDisponible.getOffset();
+                //Fragmentacion interna, si el espacio vacio que se encunetra es mucho mas grande que el registro se divide el espacio sobrante y se vuelve a meter a la availlist
+                int sobrante = espacioDisponible.getTamano() - tamanoRequerido;
+                if (sobrante > 15) {
+                    long nuevoOffsetSobrante = posicionEscritura + tamanoRequerido;
+                    availListActual.Insertar(nuevoOffsetSobrante, sobrante);
+                    tamanoRequerido = espacioDisponible.getTamano() - sobrante;
+                }else{
+                    //Si el sobrante es muy pequeno 
+                    tamanoRequerido = espacioDisponible.getTamano(); 
+                }
+            }else{
+                posicionEscritura = this.archivoActual.length();
+                if (posicionEscritura < metadataActual.getOffsetInicio()) {
+                    posicionEscritura = metadataActual.getOffsetInicio();
+                }
+            }
+            this.archivoActual.seek(posicionEscritura);
+            this.archivoActual.writeBytes(cadenaEscribir);
+            
+            //rellenar el sobrante con espacios
+            int bytesEscritos = cadenaEscribir.length();
+            if (bytesEscritos < tamanoRequerido) {
+                this.archivoActual.seek(posicionEscritura + bytesEscritos - 1);
+                for (int i = 0; i < (tamanoRequerido - bytesEscritos); i++) {
+                    this.archivoActual.writeBytes(" ");
+                }
+                this.archivoActual.writeBytes("\n");
+            }
+            return true;
         } catch (Exception e) {
             return false;
         }
@@ -83,9 +123,10 @@ public class ManejadorArchivo {
     
     public boolean borrarRegistroLogico(String llaveABorrar) {
         try {
-            if (this.archivoActual == null) return false;
-
-            this.archivoActual.seek(0); 
+            if (this.archivoActual == null) {
+                return false;
+            }
+            this.archivoActual.seek(metadataActual.getOffsetInicio()); 
             String linea;
             long posicionRegistro;
 
@@ -93,8 +134,9 @@ public class ManejadorArchivo {
                 posicionRegistro = this.archivoActual.getFilePointer() - (linea.length() + 1);
 
                 if (!linea.startsWith("*") && linea.startsWith(llaveABorrar)) {
-                    this.archivoActual.seek(posicionRegistro);
-                    this.archivoActual.writeBytes("*"); 
+                    int tamanoEspacio = linea.length() + 1;
+                    availListActual.Insertar(posicionRegistro, tamanoEspacio);
+                    availListActual.guardarEnArchivo(archivoActual, metadataActual);
                     return true;
                 }
             }
@@ -108,20 +150,31 @@ public class ManejadorArchivo {
         try {
             if (this.archivoActual == null) return false;
 
-            this.archivoActual.seek(0); 
+            this.archivoActual.seek(metadataActual.getOffsetInicio()); 
             String linea;
             long posicionRegistro;
 
             while ((linea = this.archivoActual.readLine()) != null) {
                 posicionRegistro = this.archivoActual.getFilePointer() - (linea.length() + 1);
 
-                // Buscamos que no esté borrado y que coincida con la llave primaria
                 if (!linea.startsWith("*") && linea.startsWith(llaveAModificar)) {
-                    this.archivoActual.seek(posicionRegistro);
-
-                    // Agregamos un salto de línea al final para mantener la estructura limpia
-                    this.archivoActual.writeBytes(nuevoRegistroCompleto + "\n"); 
-                    return true;
+                    int tamanoMaximoSlot = linea.length();//Espacio sin el \n
+                    int tamanoNuevoES = nuevoRegistroCompleto.length();
+                    if (tamanoNuevoES <= tamanoMaximoSlot) {
+                        this.archivoActual.seek(posicionRegistro);
+                        this.archivoActual.writeBytes(nuevoRegistroCompleto);
+                        
+                        int diferencia = tamanoMaximoSlot - tamanoNuevoES;
+                        for (int i = 0; i < diferencia; i++) {
+                            this.archivoActual.writeBytes(" ");
+                        }
+                        this.archivoActual.writeBytes("\n");
+                        return true;
+                    }else{
+                        borrarRegistroLogico(llaveAModificar);
+                        escribirRegistro(nuevoRegistroCompleto);
+                        return true;
+                    }
                 }
             }
             return false;

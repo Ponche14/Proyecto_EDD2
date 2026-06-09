@@ -8,8 +8,8 @@ public class Metadata {
     private long rootArbolB;
     private int posLlavePrimaria;
     private int posLlaveSecundaria;
-    
     private ArrayList<Campo> campos;
+    private long offsetInicio;
 
     public Metadata() {
         this.headAvaiList = -1;
@@ -17,6 +17,7 @@ public class Metadata {
         this.posLlavePrimaria = -1;
         this.posLlaveSecundaria = -1;
         this.campos = new ArrayList<>();
+        this.offsetInicio = -1;
     }
     
     public void guardar(java.io.RandomAccessFile file) throws java.io.IOException{
@@ -25,8 +26,7 @@ public class Metadata {
         file.writeLong(rootArbolB); //8 
         file.writeInt(posLlavePrimaria); //4
         file.writeInt(posLlaveSecundaria); //4
-        
-        file.writeInt(campos.size());
+        file.writeInt(campos.size()); //4
         
         for (Campo c : campos) {
             file.writeUTF(c.getNombre());
@@ -35,6 +35,7 @@ public class Metadata {
             file.writeBoolean(c.isEsPrimaria());
             file.writeBoolean(c.isEsSecundaria());
         }
+        this.offsetInicio = file.getFilePointer();
     }
     
     public void cargar(java.io.RandomAccessFile file) throws java.io.IOException{
@@ -56,8 +57,13 @@ public class Metadata {
             Campo c = new Campo(nombre, tipo, longitud, esPrimaria, esSecundaria);
             this.campos.add(c);
         }
+        this.offsetInicio = file.getFilePointer();
     }
 
+    public long getOffsetInicio() {
+        return offsetInicio;
+    }
+    
     public long getHeadAvaiList() {
         return headAvaiList;
     }
