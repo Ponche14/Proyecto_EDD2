@@ -19,13 +19,13 @@ public class BTreeNode implements Serializable {
     int numKeys;
     private static final long SerialVersionUID = 777;
 
-    public BTreeNode(int t, boolean leaf) {
+   public BTreeNode(int t, boolean leaf) {
         this.t = t;
         this.isLeaf = leaf;
-        this.keys = new Llave[t - 1]; // Máximo de claves: t - 1
-        this.children = new BTreeNode[t]; // Máximo de hijos: t
+        this.keys = new Llave[2 * t - 1];
+        this.children = new BTreeNode[2 * t];
         this.numKeys = 0;
-    }
+    }   
 
     public Llave[] getKeys() {
         return keys;
@@ -87,9 +87,5 @@ public class BTreeNode implements Serializable {
             sb.append(keys[i]).append(" ");
         }
         return sb.toString().trim();  // Devuelve las claves como una cadena separada por espacios
-    }
-
-    void setNumberKeys(int length) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
