@@ -443,9 +443,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     for (Campo c : camposCargados) {
                         modelo.addColumn(c.getNombre().toUpperCase());
                     }
-                    // commit de prueba
-                    // a ver
-                    // porque no
                     ListarRegistroButtonMouseClicked(null);
                 } catch (Exception e) {
                     System.out.println("Archivo abierto pero hubo problema con la tabla " + e.getMessage());
