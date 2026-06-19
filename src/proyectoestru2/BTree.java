@@ -205,10 +205,10 @@
                 Llave llave2 = encontrado.getKeys()[pos];
 
                 bf.write(
-                        llave1.getKey() + " | RRN1="
-                        + llave1.getRRN()
-                        + " | RRN2="
-                        + llave2.getRRN());
+                        llave1.getKey() + " | offset1="
+                        + llave1.getOffset()
+                        + " | offset2="
+                        + llave2.getOffset());
 
                 bf.newLine();
             }

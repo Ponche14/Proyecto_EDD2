@@ -8,16 +8,16 @@ import java.io.Serializable;
  */
 public class Llave implements Serializable {
 
-    private Long RRN;
+    private Long offset;
     private Comparable key;
     private static final long SerialVersionUID = 777;
 
     public Llave() {
     }
 
-    public Llave(Comparable key, long RRN) {
+    public Llave(Comparable key, long offset) {
         this.key = key;
-        this.RRN = RRN;
+        this.offset = offset;
     }
 
     public Comparable getKey() {
@@ -28,16 +28,16 @@ public class Llave implements Serializable {
         this.key = key;
     }
 
-    public Long getRRN() {
-        return RRN;
+    public Long getOffset() {
+        return offset;
     }
 
-    public void setRRN(Long RRN) {
-        this.RRN = RRN;
+    public void setOffset(Long offset) {
+        this.offset = offset;
     }
 
     @Override
     public String toString() {
-        return "Llave{" + "RRN=" + RRN + ", key=" + key + '}';
+        return "Llave{" + "offset=" + offset + ", key=" + key + '}';
     }
 }
