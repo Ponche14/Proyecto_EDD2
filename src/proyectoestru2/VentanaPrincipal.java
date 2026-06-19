@@ -839,6 +839,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 }
                 modelo.addRow(datosRegistro);
             }
+            
+            sincronizarArchivoATablas();
 
             javax.swing.JOptionPane.showMessageDialog(this, 
                 "Registros actualizados correctamente desde el archivo físico.", 
