@@ -9,7 +9,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName());
     
     private ManejadorArchivo dbms = new ManejadorArchivo();
-
+    private BTree arbolB = new BTree();
     private Nodo head = new Nodo(null, null, null);
     
     public VentanaPrincipal() {
@@ -709,6 +709,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             boolean exito = dbms.escribirRegistro(registroEstructurado.toString());
         
             if (exito) {
+                arbolB.insert(new Llave(registroEstructurado.toString(), 0L));
                 javax.swing.table.DefaultTableModel modeloRegistros = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
                 modeloRegistros.addRow(filaTabla);
             } else {
