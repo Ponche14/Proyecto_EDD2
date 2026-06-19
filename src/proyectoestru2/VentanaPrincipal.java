@@ -1,6 +1,9 @@
 
 package proyectoestru2;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -63,6 +66,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         BuscarRegistroButton = new javax.swing.JButton();
         ModificarRegistroButton = new javax.swing.JButton();
         ListarRegistroButton = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        jPanel3 = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -399,11 +406,56 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         PanelPrincipal.addTab("Registros", RegistroPanel);
 
+        jPanel3.setBackground(new java.awt.Color(204, 204, 204));
+
+        jButton1.setText("Exportar a JSON");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+
+        jButton2.setText("Exportar a XML");
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(92, 92, 92)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(681, Short.MAX_VALUE))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(54, 54, 54)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(350, Short.MAX_VALUE))
+        );
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        );
+
+        PanelPrincipal.addTab("Exportar", jPanel2);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(PanelPrincipal, javax.swing.GroupLayout.DEFAULT_SIZE, 968, Short.MAX_VALUE)
+            .addComponent(PanelPrincipal)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -852,7 +904,52 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_ListarRegistroButtonMouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        BTreeNode curr = arbolB.getRoot();
+        StringBuilder JSONBuilder = new StringBuilder();
+        if (curr == null) {
+            JSONBuilder.append("{\n");
+            JSONBuilder.append(" \"ARBOL\" \"VACIO\",\n ");
+            JSONBuilder.append("}\n");
+        } else {
+            JSONBuilder.append(JSONTreeBuilder(curr));
+        }
+        String ruta = "BTREE.json";
+        try(BufferedWriter w = new BufferedWriter(new FileWriter(ruta))){
+            w.write(JSONBuilder.toString());
+            JOptionPane.showMessageDialog(null, "Exportacion Exitosa");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error al momento de exportar el archivo");
+        }
+    }//GEN-LAST:event_jButton1MouseClicked
     
+    private StringBuilder JSONTreeBuilder(BTreeNode curr){
+        StringBuilder tempBuilder = new StringBuilder(); 
+        java.util.ArrayList<Campo> cp = dbms.getListaCampos();
+        if (curr == null){
+            tempBuilder.append("{\n");
+            tempBuilder.append("\"null\"");
+            tempBuilder.append("}\n");
+            return tempBuilder;
+        }
+        for (int i = 0; i < curr.getNumKeys(); i++) {
+            if (!curr.isLeaf()) {
+                JSONTreeBuilder(curr.getChildren()[i]);
+                for (int j = 0; j < curr.getNumKeys();j++) {
+                    Campo temp = cp.get(j);
+                    tempBuilder.append("{\n");
+                    tempBuilder.append("  \""+temp.getNombre()+"\": \""+curr.getKeys()[j]+"\",\n");
+                }
+                tempBuilder.append("}\n");
+            }
+        }
+        if (!curr.isLeaf()) {
+            tempBuilder.append(JSONTreeBuilder(curr.getChildren()[0]));
+        }
+        return tempBuilder;
+    }
+   
     public void ActualizarTablaCampos() {
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) TableCampos.getModel();
         modelo.setRowCount(0);
@@ -979,7 +1076,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTable TableCampos;
     private javax.swing.JComboBox<String> TipoCampoComboBox;
     private javax.swing.JLabel TipoCampoLabel;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     // End of variables declaration//GEN-END:variables
