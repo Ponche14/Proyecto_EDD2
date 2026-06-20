@@ -2,8 +2,10 @@
 package proyectoestru2;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
@@ -339,6 +341,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         });
 
         CargarRegistrosPruebaButton.setText("Cargar Registros Prueba");
+        CargarRegistrosPruebaButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CargarRegistrosPruebaButtonMouseClicked(evt);
+            }
+        });
 
         InsertarRegistroButton.setText("Insertar Registro");
         InsertarRegistroButton.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -961,6 +968,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_ExportarXMLButtonMouseClicked
+
+    private void CargarRegistrosPruebaButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CargarRegistrosPruebaButtonMouseClicked
+        JFileChooser fileChooser = new JFileChooser();
+        int validacion = fileChooser.showOpenDialog(null);
+        if (validacion == JFileChooser.APPROVE_OPTION) {
+            dbms.abrirArchivo(fileChooser.getSelectedFile());
+        }
+    }//GEN-LAST:event_CargarRegistrosPruebaButtonMouseClicked
     
     private StringBuilder XMLTreeBuilder(BTreeNode curr){
         StringBuilder tempBuilder = new StringBuilder();
