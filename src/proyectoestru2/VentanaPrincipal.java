@@ -512,10 +512,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_AbrirArchivoButtonMouseClicked
 
     private void CerrarArchivoButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CerrarArchivoButtonMouseClicked
+        for (int i = 0;i<dbms.getListaCampos().size();i++) {
+            dbms.getListaCampos().remove(i);
+        }
         if (dbms.isArchivoAbierto()) {
             if (dbms.cerrarArchivo()) {
                 javax.swing.JOptionPane.showMessageDialog(this, "Archivo cerrado de forma segura.");
                 actualizarEstadoArchivo(null);
+                ActualizarTabla();
             }else{
                 javax.swing.JOptionPane.showMessageDialog(this, "No se pudo cerrar el archivo.");
             }
@@ -524,6 +528,17 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_CerrarArchivoButtonMouseClicked
 
+    private void ActualizarTabla(){
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
+        modelo.setColumnCount(0);
+        modelo.setRowCount(0);
+
+        java.util.ArrayList<Campo> camposCargados = dbms.getMetadataActual().getCampos();
+        for (Campo c : camposCargados) {
+            modelo.addColumn(c.getNombre().toUpperCase());
+        }
+    }
+    
     private void CrearArchivoButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CrearArchivoButtonMouseClicked
         javax.swing.JFileChooser selector = new javax.swing.JFileChooser();
         int resultado = selector.showSaveDialog(this);
@@ -649,6 +664,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         int fila = TableCampos.getSelectedRow();
         if (fila >= 0) {
             dbms.getListaCampos().remove(fila);
+            dbms.getMetadataActual().getCampos().remove(fila);
             ActualizarTablaCampos();
             JOptionPane.showMessageDialog(this, "Campo eliminado con exito");
         }else{
@@ -676,6 +692,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             return;
         }
         Campo campoAModificar = dbms.getListaCampos().get(fila);
+        
     }//GEN-LAST:event_ModificarCampoButtonMouseClicked
 
     private void BuscarRegistroButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_BuscarRegistroButtonMouseClicked

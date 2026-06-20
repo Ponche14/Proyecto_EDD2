@@ -133,7 +133,7 @@ public class ManejadorArchivo {
             while ((linea = this.archivoActual.readLine()) != null) {
                 posicionRegistro = this.archivoActual.getFilePointer() - (linea.length() + 1);
 
-                if (!linea.startsWith("*") && linea.startsWith(llaveABorrar)) {
+                if (!linea.equals("*") && linea.equals(llaveABorrar)) {
                     int tamanoEspacio = linea.length() + 1;
                     availListActual.Insertar(posicionRegistro, tamanoEspacio);
                     availListActual.guardarEnArchivo(archivoActual, metadataActual);
