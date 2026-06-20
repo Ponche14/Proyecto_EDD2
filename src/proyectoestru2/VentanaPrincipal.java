@@ -914,18 +914,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         BTreeNode curr = arbolB.getRoot();
         StringBuilder JSONBuilder = new StringBuilder();
         if (curr == null) {
-            JSONBuilder.append("{\n");
-            JSONBuilder.append(" \"ARBOL\" \"VACIO\",\n ");
-            JSONBuilder.append("}\n");
+            JOptionPane.showMessageDialog(null, "Arbold Vacio");
         } else {
             JSONBuilder.append(JSONTreeBuilder(curr));
-        }
-        String ruta = "BTREE.json";
-        try(BufferedWriter w = new BufferedWriter(new FileWriter(ruta))){
-            w.write(JSONBuilder.toString());
-            JOptionPane.showMessageDialog(null, "Exportacion Exitosa");
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error al momento de exportar el archivo");
+            String ruta = "BTREE.json";
+            try(BufferedWriter w = new BufferedWriter(new FileWriter(ruta))){
+                w.write(JSONBuilder.toString());
+                JOptionPane.showMessageDialog(null, "Exportacion Exitosa");
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Error al momento de exportar el archivo");
+            }
         }
     }//GEN-LAST:event_ExportarJSONButtonMouseClicked
 
@@ -937,13 +935,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Arbol Vacio");
         } else {
             XMLTreeBuilder(curr);
-        }
-        String ruta = "BTREE.xml";
-        try(BufferedWriter w = new BufferedWriter(new FileWriter(ruta))){
-            w.write(XMLBuilder.toString());
-            JOptionPane.showMessageDialog(null, "Exportacion Exitosa");
-        } catch (IOException e) {
-            JOptionPane.showMessageDialog(null, "Error al momento de exportar el archivo");
+            String ruta = "BTREE.xml";
+            try(BufferedWriter w = new BufferedWriter(new FileWriter(ruta))){
+                w.write(XMLBuilder.toString());
+                JOptionPane.showMessageDialog(null, "Exportacion Exitosa");
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(null, "Error al momento de exportar el archivo");
+            }
         }
     }//GEN-LAST:event_ExportarXMLButtonMouseClicked
     
