@@ -973,7 +973,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         JFileChooser fileChooser = new JFileChooser();
         int validacion = fileChooser.showOpenDialog(null);
         if (validacion == JFileChooser.APPROVE_OPTION) {
-            dbms.abrirArchivo(fileChooser.getSelectedFile());
+            dbms.abrirArchivo(fileChooser.getSelectedFile().getAbsolutePath());
         }
     }//GEN-LAST:event_CargarRegistrosPruebaButtonMouseClicked
     
