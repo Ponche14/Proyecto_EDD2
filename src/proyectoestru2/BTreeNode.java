@@ -14,7 +14,6 @@ public class BTreeNode implements Serializable {
 
     private Llave[] keys;
     private BTreeNode[] children;
-    private Campo campo;
     
     private boolean isLeaf;
     private int t;

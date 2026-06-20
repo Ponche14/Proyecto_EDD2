@@ -68,8 +68,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         ListarRegistroButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
-        jButton1 = new javax.swing.JButton();
-        jButton2 = new javax.swing.JButton();
+        ExportarJSONButton = new javax.swing.JButton();
+        ExportarXMLButton = new javax.swing.JButton();
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -408,14 +408,19 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(204, 204, 204));
 
-        jButton1.setText("Exportar a JSON");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+        ExportarJSONButton.setText("Exportar a JSON");
+        ExportarJSONButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
+                ExportarJSONButtonMouseClicked(evt);
             }
         });
 
-        jButton2.setText("Exportar a XML");
+        ExportarXMLButton.setText("Exportar a XML");
+        ExportarXMLButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                ExportarXMLButtonMouseClicked(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
@@ -424,17 +429,17 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(92, 92, 92)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(ExportarXMLButton, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ExportarJSONButton, javax.swing.GroupLayout.PREFERRED_SIZE, 195, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(681, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(54, 54, 54)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ExportarJSONButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(ExportarXMLButton, javax.swing.GroupLayout.PREFERRED_SIZE, 47, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(350, Short.MAX_VALUE))
         );
 
@@ -905,7 +910,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_ListarRegistroButtonMouseClicked
 
-    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+    private void ExportarJSONButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ExportarJSONButtonMouseClicked
         BTreeNode curr = arbolB.getRoot();
         StringBuilder JSONBuilder = new StringBuilder();
         if (curr == null) {
@@ -922,20 +927,62 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Error al momento de exportar el archivo");
         }
-    }//GEN-LAST:event_jButton1MouseClicked
+    }//GEN-LAST:event_ExportarJSONButtonMouseClicked
+
+    private void ExportarXMLButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ExportarXMLButtonMouseClicked
+        BTreeNode curr = arbolB.getRoot();
+        StringBuilder XMLBuilder = new StringBuilder();
+        XMLBuilder.append("<Root>Root</Root>" );
+        if (curr == null) {
+            JOptionPane.showMessageDialog(null, "Arbol Vacio");
+        } else {
+            XMLTreeBuilder(curr);
+        }
+        String ruta = "BTREE.xml";
+        try(BufferedWriter w = new BufferedWriter(new FileWriter(ruta))){
+            w.write(XMLBuilder.toString());
+            JOptionPane.showMessageDialog(null, "Exportacion Exitosa");
+        } catch (IOException e) {
+            JOptionPane.showMessageDialog(null, "Error al momento de exportar el archivo");
+        }
+    }//GEN-LAST:event_ExportarXMLButtonMouseClicked
+    
+    private StringBuilder XMLTreeBuilder(BTreeNode curr){
+        StringBuilder tempBuilder = new StringBuilder();
+        java.util.ArrayList<Campo> cp = dbms.getListaCampos();
+        if (curr == null) {
+            return tempBuilder;
+        } else {
+            int cont;
+            for (cont = 0; cont < curr.getNumKeys(); cont++) {
+                if (!curr.isLeaf()) {
+                    XMLTreeBuilder(curr.getChildren()[cont]);
+                    tempBuilder.append("<ChildNode>\n");
+                    for (int j = 0; j<curr.getNumKeys();j++) {
+                        Campo temp = cp.get(j);
+                        tempBuilder.append("    ");
+                        tempBuilder.append("<"+temp.getNombre()+">"+curr.getKeys()[j]+"</"+temp.getNombre()+">\n");
+                    }
+                    tempBuilder.append("</ChildNode>\n");
+                }
+            }
+            if (!curr.isLeaf()) {
+                XMLTreeBuilder(curr.getChildren()[cont]);
+            }
+            return tempBuilder;
+        }
+    }
     
     private StringBuilder JSONTreeBuilder(BTreeNode curr){
         StringBuilder tempBuilder = new StringBuilder(); 
         java.util.ArrayList<Campo> cp = dbms.getListaCampos();
         if (curr == null){
-            tempBuilder.append("{\n");
-            tempBuilder.append("\"null\"");
-            tempBuilder.append("}\n");
             return tempBuilder;
         }
-        for (int i = 0; i < curr.getNumKeys(); i++) {
+        int cont;
+        for (cont = 0; cont < curr.getNumKeys(); cont++) {
             if (!curr.isLeaf()) {
-                JSONTreeBuilder(curr.getChildren()[i]);
+                JSONTreeBuilder(curr.getChildren()[cont]);
                 for (int j = 0; j < curr.getNumKeys();j++) {
                     Campo temp = cp.get(j);
                     tempBuilder.append("{\n");
@@ -945,7 +992,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         }
         if (!curr.isLeaf()) {
-            tempBuilder.append(JSONTreeBuilder(curr.getChildren()[0]));
+            tempBuilder.append(JSONTreeBuilder(curr.getChildren()[cont]));
         }
         return tempBuilder;
     }
@@ -1060,6 +1107,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JFrame CrearCampoFrame;
     private javax.swing.JButton EliminarCampoButton;
     private javax.swing.JLabel EstadoArchivoLabel;
+    private javax.swing.JButton ExportarJSONButton;
+    private javax.swing.JButton ExportarXMLButton;
     private javax.swing.JButton GuardarArchivoButton;
     private javax.swing.JButton InsertarRegistroButton;
     private javax.swing.JButton ListarRegistroButton;
@@ -1076,8 +1125,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTable TableCampos;
     private javax.swing.JComboBox<String> TipoCampoComboBox;
     private javax.swing.JLabel TipoCampoLabel;
-    private javax.swing.JButton jButton1;
-    private javax.swing.JButton jButton2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
