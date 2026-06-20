@@ -68,6 +68,24 @@
         public BTreeNode search(Object key) {
             return (root == null) ? null : searchInNode(root, key);
         }
+        
+        // Igual que search(), pero devuelve la Llave completa (con su offset real
+        // en el archivo) en vez del nodo. Esto es lo que permite que "Buscar Registro"
+        // use el indice del Arbol B en vez de la tabla en memoria.
+        public Llave searchLlave(Object key) {
+            if (root == null) {
+                return null;
+            }
+            BTreeNode node = searchInNode(root, key);
+            if (node == null) {
+                return null;
+            }
+            int index = node.binarySearch(key);
+            if (index >= 0 && index < node.getNumKeys()) {
+                return node.getKeys()[index];
+            }
+            return null;
+        }
 
         private BTreeNode searchInNode(BTreeNode node, Object key) {
             int index = node.binarySearch(key);

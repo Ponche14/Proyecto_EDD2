@@ -73,10 +73,10 @@ public class ManejadorArchivo {
         }
     }
     //Escritura con best fit
-    public boolean escribirRegistro(String registro) {
+    public Long escribirRegistro(String registro) {
         try {
             if (this.archivoActual == null) {
-                return false;
+                return null;
             }
             String cadenaEscribir = registro + "\n";
             int tamanoRequerido = cadenaEscribir.length();
@@ -115,9 +115,9 @@ public class ManejadorArchivo {
                 }
                 this.archivoActual.writeBytes("\n");
             }
-            return true;
+            return posicionEscritura;
         } catch (Exception e) {
-            return false;
+            return null;
         }
     }
     
@@ -180,6 +180,20 @@ public class ManejadorArchivo {
             return false;
         } catch (Exception e) {
             return false;
+        }
+    }
+    
+    // Lee la linea completa del archivo que empieza en la posicion indicada.
+    // Se usa para resolver un registro a partir del offset que entrega el Arbol B.
+    public String leerRegistroEnPosicion(long posicion) {
+        try {
+            if (this.archivoActual == null) {
+                return null;
+            }
+            this.archivoActual.seek(posicion);
+            return this.archivoActual.readLine();
+        } catch (Exception e) {
+            return null;
         }
     }
 

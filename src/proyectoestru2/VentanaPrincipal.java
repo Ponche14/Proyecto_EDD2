@@ -14,7 +14,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(VentanaPrincipal.class.getName());
     
     private ManejadorArchivo dbms = new ManejadorArchivo();
-    private BTree arbolB = new BTree();
+    private BTree arbolB = new BTree(3); // t = 3 arbol de 6 vias
     private Nodo head = new Nodo(null, null, null);
     
     public VentanaPrincipal() {
@@ -711,41 +711,68 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             System.out.println("Búsqueda cancelada o vacía.");
             return;
         }
+        llaveABuscar = llaveABuscar.trim();
 
-        System.out.println("Buscando la llave: '" + llaveABuscar.trim() + "'");
-
-        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
-        boolean encontrado = false;
-    
-        System.out.println("Filas totales en la tabla actualmente: " + modelo.getRowCount());
-
-        for (int i = 0; i < modelo.getRowCount(); i++) {
-            if (modelo.getValueAt(i, 0) == null) {
-                System.out.println("La fila " + i + " en la columna 0 está vacía (null).");
-                continue;
-            }
-
-            String llaveActual = modelo.getValueAt(i, 0).toString().trim();
-            System.out.println("Comparando con fila " + i + ", llave actual en tabla: '" + llaveActual + "'");
-
-            if (llaveActual.equalsIgnoreCase(llaveABuscar.trim())) {
-                RegistrosTable.setRowSelectionInterval(i, i);
-                RegistrosTable.scrollRectToVisible(RegistrosTable.getCellRect(i, 0, true));
-
-                encontrado = true;
-                System.out.println("¡Llave encontrada en la fila " + i + "!");
-                javax.swing.JOptionPane.showMessageDialog(this, 
-                    "¡Registro encontrado y seleccionado en la tabla!", 
-                    "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
-                break; 
-            }
+        if (!dbms.isArchivoAbierto()) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "No hay ningún archivo abierto para buscar.", 
+                "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
         }
 
-        if (!encontrado) {
-            System.out.println("No se encontró coincidencia en ninguna fila.");
+        // Se busca la llave en el Arbol B (indice), no en la tabla en memoria.
+        Llave llaveEncontrada = arbolB.searchLlave(llaveABuscar);
+
+        if (llaveEncontrada == null) {
+            System.out.println("No se encontró coincidencia en el índice.");
             javax.swing.JOptionPane.showMessageDialog(this, 
             "No se encontró ningún registro con la llave: " + llaveABuscar, 
             "No Encontrado", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // Usar el offset que guarda la llave para leer el registro directo del archivo
+        // (sin recorrer ni cargar todos los registros en memoria).
+        String linea = dbms.leerRegistroEnPosicion(llaveEncontrada.getOffset());
+
+        if (linea == null || linea.startsWith("*")) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+            "El índice apunta a una posición inválida o a un registro borrado.", 
+            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        java.util.ArrayList<Campo> campos = dbms.getMetadataActual().getCampos();
+        StringBuilder detalle = new StringBuilder();
+        int indiceActual = 0;
+        for (Campo c : campos) {
+            int longitud = c.getLongitud();
+            String valorCampo;
+            if (indiceActual + longitud <= linea.length()) {
+                valorCampo = linea.substring(indiceActual, indiceActual + longitud).trim();
+            } else if (indiceActual < linea.length()) {
+                valorCampo = linea.substring(indiceActual).trim();
+            } else {
+                valorCampo = "";
+            }
+            indiceActual += longitud;
+            detalle.append(c.getNombre()).append(": ").append(valorCampo).append("\n");
+        }
+
+        System.out.println("¡Llave encontrada en el offset " + llaveEncontrada.getOffset() + "!");
+        javax.swing.JOptionPane.showMessageDialog(this, 
+            "Registro encontrado:\n" + detalle, 
+            "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+
+        // Si el registro tambien esta cargado en la tabla visible, seleccionarlo
+        javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
+        for (int i = 0; i < modelo.getRowCount(); i++) {
+            if (modelo.getValueAt(i, 0) != null
+                    && modelo.getValueAt(i, 0).toString().trim().equalsIgnoreCase(llaveABuscar)) {
+                RegistrosTable.setRowSelectionInterval(i, i);
+                RegistrosTable.scrollRectToVisible(RegistrosTable.getCellRect(i, 0, true));
+                break;
+            }
         }
     }//GEN-LAST:event_BuscarRegistroButtonMouseClicked
 
@@ -787,18 +814,35 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
 
         try {
-            boolean exito = dbms.escribirRegistro(registroEstructurado.toString());
-        
-            if (exito) {
-                arbolB.insert(new Llave(registroEstructurado.toString(), 0L));
+            Long posicionEscrita = dbms.escribirRegistro(registroEstructurado.toString());
+
+            if (posicionEscrita != null) {
+                // Buscar el valor del campo marcado como llave primaria para indexarlo
+                // (antes se indexaba el registro completo, lo cual no tiene sentido).
+                Comparable valorLlavePrimaria = null;
+                for (int i = 0; i < listaCamposActuales.size(); i++) {
+                    if (listaCamposActuales.get(i).isEsPrimaria()) {
+                        valorLlavePrimaria = (Comparable) filaTabla[i];
+                        break;
+                    }
+                }
+
+                if (valorLlavePrimaria != null) {
+                    arbolB.insert(new Llave(valorLlavePrimaria, posicionEscrita));
+                } else {
+                    javax.swing.JOptionPane.showMessageDialog(this,
+                        "El registro se guardo en el archivo, pero no se indexo porque "
+                        + "no hay ningun campo marcado como llave primaria.",
+                        "Advertencia", javax.swing.JOptionPane.WARNING_MESSAGE);
+                }
+
                 javax.swing.table.DefaultTableModel modeloRegistros = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
                 modeloRegistros.addRow(filaTabla);
             } else {
                 javax.swing.JOptionPane.showMessageDialog(this, 
                     "El registro no se pudo escribir en el archivo.", 
                     "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
-            }
-        
+            }       
         } catch (Exception e) {
             javax.swing.JOptionPane.showMessageDialog(this, 
                 "Ocurrio un error al procesar el archivo: " + e.getMessage(), 
