@@ -892,30 +892,53 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             return;
         }
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
-        String llavePrimaria = modelo.getValueAt(filaSeleccionada, 0).toString();
-        String registroModificado = llavePrimaria; 
-    
-        for (int i = 1; i < dbms.getListaCampos().size(); i++) {
-            Campo c = dbms.getListaCampos().get(i);
+        String llavePrimaria = modelo.getValueAt(filaSeleccionada, 0).toString().trim();
+
+        // Mismo origen de campos y mismo esquema de codificacion que usa
+        // InsertarRegistroButtonMouseClicked: cada campo se trunca o se rellena
+        // con espacios hasta su longitud declarada. Antes este metodo armaba el
+        // registro separado por comas, lo que dejaba el archivo con dos formatos
+        // distintos segun la ruta usada (insertar vs modificar).
+        java.util.ArrayList<Campo> camposActuales = dbms.getMetadataActual().getCampos();
+        StringBuilder registroEstructurado = new StringBuilder();
+
+        for (int i = 0; i < camposActuales.size(); i++) {
+            Campo c = camposActuales.get(i);
             String valorActual = modelo.getValueAt(filaSeleccionada, i).toString();
 
-            String nuevoValor = javax.swing.JOptionPane.showInputDialog(this, 
-                "Modificando el campo '" + c.getNombre() + "'\nValor actual: " + valorActual, 
-                valorActual);
-
-            if (nuevoValor == null || nuevoValor.trim().isEmpty()) {
+            String nuevoValor;
+            if (i == 0) {
+                // La llave primaria se usa para localizar el registro en el
+                // archivo y no se debe modificar aqui.
                 nuevoValor = valorActual;
+            } else {
+                nuevoValor = javax.swing.JOptionPane.showInputDialog(this, 
+                    "Modificando el campo '" + c.getNombre() + "'\nValor actual: " + valorActual, 
+                    valorActual);
+
+                if (nuevoValor == null || nuevoValor.trim().isEmpty()) {
+                    nuevoValor = valorActual;
+                }
             }
 
-            modelo.setValueAt(nuevoValor, filaSeleccionada, i);
-            registroModificado += "," + nuevoValor;
+            if (nuevoValor.length() > c.getLongitud()) {
+                nuevoValor = nuevoValor.substring(0, c.getLongitud());
+            } else {
+                while (nuevoValor.length() < c.getLongitud()) {
+                    nuevoValor += " ";
+                }
+            }
+
+            modelo.setValueAt(nuevoValor.trim(), filaSeleccionada, i);
+            registroEstructurado.append(nuevoValor);
         }
-        boolean modificacionExitosa = dbms.modificarRegistroFisico(llavePrimaria, registroModificado);
+
+        boolean modificacionExitosa = dbms.modificarRegistroFisico(llavePrimaria, registroEstructurado.toString());
 
         if (modificacionExitosa) {
             javax.swing.JOptionPane.showMessageDialog(this, 
                 "El registro con llave '" + llavePrimaria + "' fue modificado correctamente en el archivo.", 
-                "Éxito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+                "Exito", javax.swing.JOptionPane.INFORMATION_MESSAGE);
         } else {
             javax.swing.JOptionPane.showMessageDialog(this, 
                 "No se pudo modificar el registro en el archivo físico.", 
@@ -945,7 +968,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             String linea;
 
             while ((linea = archivo.readLine()) != null) {
-                if (!linea.startsWith("*") && !linea.trim().isEmpty()) {
+                // Antes la condicion estaba invertida: saltaba los registros reales
+                // y procesaba los borrados (*) y las lineas vacias. Aqui se salta
+                // justamente lo que NO se debe listar (borrados/vacios).
+                if (linea.startsWith("*") || linea.trim().isEmpty()) {
                     continue;
                 }
                 Object[] datosRegistro = new Object[campos.size()];

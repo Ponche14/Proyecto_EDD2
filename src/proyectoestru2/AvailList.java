@@ -86,8 +86,16 @@ public class AvailList {
             int bytesEscritos = infoEliminada.length();
             int restante = actual.getTamano() - bytesEscritos;
             
-            for (int i = 0; i < restante; i++) {
-                file.writeByte(' ');
+            // El tamano del slot incluye el salto de linea final, asi que dejamos
+            // un byte reservado para el "\n" y solo rellenamos con espacios el resto
+            // (igual que ya se hace en escribirRegistro). Antes nunca se escribia
+            // el "\n" y eso corrompia la lectura secuencial de todo lo que viniera
+            // despues de un espacio liberado.
+            if (restante > 0) {
+                for (int i = 0; i < restante - 1; i++) {
+                    file.writeByte(' ');
+                }
+                file.writeBytes("\n");
             }
             actual = actual.getSiguiente();
         }
