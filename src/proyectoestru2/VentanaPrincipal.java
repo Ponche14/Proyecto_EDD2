@@ -998,7 +998,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void ExportarXMLButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ExportarXMLButtonMouseClicked
         BTreeNode curr = arbolB.getRoot();
         StringBuilder XMLBuilder = new StringBuilder();
-        XMLBuilder.append("<Root>Root</Root>" );
+        XMLBuilder.append("<Root>Root</Root>\n" );
         if (curr == null) {
             JOptionPane.showMessageDialog(null, "Arbol Vacio");
         } else {
@@ -1016,8 +1016,33 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void CargarRegistrosPruebaButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CargarRegistrosPruebaButtonMouseClicked
         JFileChooser fileChooser = new JFileChooser();
         int validacion = fileChooser.showOpenDialog(null);
+        StringBuilder registroPrueba = new StringBuilder();
         if (validacion == JFileChooser.APPROVE_OPTION) {
-            dbms.abrirArchivo(fileChooser.getSelectedFile().getAbsolutePath());
+            if(!dbms.isArchivoAbierto()){
+                JOptionPane.showMessageDialog(null, "No hay archivos abiertos");
+            } else {
+                for (int i = 0; i < dbms.getListaCampos().size();i++) {
+                    switch(dbms.getListaCampos().get(i).getTipo()){
+                        case 'S':
+                            registroPrueba.append("String ");
+                            break;
+                        case 'I':
+                            registroPrueba.append("1000 ");
+                            break;
+                        case 'F':
+                            registroPrueba.append("1000 ");
+                            break;
+                        case 'C':
+                            registroPrueba.append("A ");
+                            break;
+                        default:
+                            registroPrueba.append("Prueba ");
+                            break;
+                    }
+                    dbms.escribirRegistro(registroPrueba.toString());
+                }
+            }
+            
         }
     }//GEN-LAST:event_CargarRegistrosPruebaButtonMouseClicked
     
