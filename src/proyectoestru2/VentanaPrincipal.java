@@ -741,23 +741,29 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
             return;
         }
-
         java.util.ArrayList<Campo> campos = dbms.getMetadataActual().getCampos();
+        String[] valores = linea.split(java.util.regex.Pattern.quote(String.valueOf(ManejadorArchivo.DELIMITADOR)), -1);
         StringBuilder detalle = new StringBuilder();
-        int indiceActual = 0;
-        for (Campo c : campos) {
-            int longitud = c.getLongitud();
-            String valorCampo;
-            if (indiceActual + longitud <= linea.length()) {
-                valorCampo = linea.substring(indiceActual, indiceActual + longitud).trim();
-            } else if (indiceActual < linea.length()) {
-                valorCampo = linea.substring(indiceActual).trim();
-            } else {
-                valorCampo = "";
-            }
-            indiceActual += longitud;
-            detalle.append(c.getNombre()).append(": ").append(valorCampo).append("\n");
+        for (int i = 0; i < campos.size(); i++) {
+            String valorCampo = (i < valores.length) ? valores[i] : "";
+            detalle.append(campos.get(i).getNombre()).append(": ").append(valorCampo).append("\n");
         }
+//        java.util.ArrayList<Campo> campos = dbms.getMetadataActual().getCampos();
+//        StringBuilder detalle = new StringBuilder();
+//        int indiceActual = 0;
+//        for (Campo c : campos) {
+//            int longitud = c.getLongitud();
+//            String valorCampo;
+//            if (indiceActual + longitud <= linea.length()) {
+//                valorCampo = linea.substring(indiceActual, indiceActual + longitud).trim();
+//            } else if (indiceActual < linea.length()) {
+//                valorCampo = linea.substring(indiceActual).trim();
+//            } else {
+//                valorCampo = "";
+//            }
+//            indiceActual += longitud;
+//            detalle.append(c.getNombre()).append(": ").append(valorCampo).append("\n");
+//        }
 
         System.out.println("¡Llave encontrada en el offset " + llaveEncontrada.getOffset() + "!");
         javax.swing.JOptionPane.showMessageDialog(this, 
@@ -928,15 +934,17 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 }
             }
 
+            if (nuevoValor.contains(String.valueOf(ManejadorArchivo.DELIMITADOR))) {
+                javax.swing.JOptionPane.showMessageDialog(this, "El valor no puede contener ';'", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             if (nuevoValor.length() > c.getLongitud()) {
                 nuevoValor = nuevoValor.substring(0, c.getLongitud());
-            } else {
-                while (nuevoValor.length() < c.getLongitud()) {
-                    nuevoValor += " ";
-                }
             }
-
-            modelo.setValueAt(nuevoValor.trim(), filaSeleccionada, i);
+            modelo.setValueAt(nuevoValor, filaSeleccionada, i);
+            if (i > 0) {
+                registroEstructurado.append(ManejadorArchivo.DELIMITADOR);
+            }
             registroEstructurado.append(nuevoValor);
         }
 
@@ -981,21 +989,21 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 if (linea.startsWith("*") || linea.trim().isEmpty()) {
                     continue;
                 }
-                Object[] datosRegistro = new Object[campos.size()];
-                int indiceaActual = 0;
-                
-                for (int i = 0; i < campos.size(); i++) {
-                    int longitud = campos.get(i).getLongitud();
-                    
-                    if (indiceaActual + longitud <= linea.length()) {
-                        String valorCampo = linea.substring(indiceaActual, indiceaActual + longitud);
-                        datosRegistro[i] = valorCampo.trim();
-                        indiceaActual += longitud;
-                    }else{
-                        datosRegistro[i] = "";
-                    }
-                }
-                modelo.addRow(datosRegistro);
+//                Object[] datosRegistro = new Object[campos.size()];
+//                int indiceaActual = 0;
+//                
+//                for (int i = 0; i < campos.size(); i++) {
+//                    int longitud = campos.get(i).getLongitud();
+//                    
+//                    if (indiceaActual + longitud <= linea.length()) {
+//                        String valorCampo = linea.substring(indiceaActual, indiceaActual + longitud);
+//                        datosRegistro[i] = valorCampo.trim();
+//                        indiceaActual += longitud;
+//                    }else{
+//                        datosRegistro[i] = "";
+//                    }
+//                }
+//                modelo.addRow(datosRegistro);
             }
             
             sincronizarArchivoATablas();
@@ -1179,25 +1187,31 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             
             while ((linea = file.readLine()) != null){
                 if (!linea.startsWith("*") && !linea.trim().isEmpty()) {
+                    String[] valores = linea.split(java.util.regex.Pattern.quote(String.valueOf(ManejadorArchivo.DELIMITADOR)), -1);
                     String[] filaDatos = new String[camposCargados.size()];
-                    int inicioParte = 0;
                     for (int i = 0; i < camposCargados.size(); i++) {
-                        Campo c = camposCargados.get(i);
-                        int finalParte = Math.min(inicioParte + c.getLongitud(), linea.length());
-                        if (inicioParte < linea.length()) {
-                            filaDatos[i] = linea.substring(inicioParte, finalParte).trim();
-                        }else{
-                            filaDatos[i] = "";
-                        }
-                        inicioParte += c.getLongitud();
+                        filaDatos[i] = (i < valores.length) ? valores[i] : "";
                     }
                     modeloRegistros.addRow(filaDatos);
+//                    String[] filaDatos = new String[camposCargados.size()];
+//                    int inicioParte = 0;
+//                    for (int i = 0; i < camposCargados.size(); i++) {
+//                        Campo c = camposCargados.get(i);
+//                        int finalParte = Math.min(inicioParte + c.getLongitud(), linea.length());
+//                        if (inicioParte < linea.length()) {
+//                            filaDatos[i] = linea.substring(inicioParte, finalParte).trim();
+//                        }else{
+//                            filaDatos[i] = "";
+//                        }
+//                        inicioParte += c.getLongitud();
+//                    }
+//                    modeloRegistros.addRow(filaDatos);
                 }
             }
         } catch (Exception e) {
             System.out.println("Error al cargar registro jtable" + e.getMessage());
         }
-        RegistrosTable.setModel(modeloCampos);
+        RegistrosTable.setModel(modeloRegistros);
    }
     /**
      * @param args the command line arguments

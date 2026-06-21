@@ -134,7 +134,8 @@ public class ManejadorArchivo {
             while ((linea = this.archivoActual.readLine()) != null) {
                 posicionRegistro = this.archivoActual.getFilePointer() - (linea.length() + 1);
 
-                if (!linea.equals("*") && linea.equals(llaveABorrar)) {
+                String[] partes = linea.split(java.util.regex.Pattern.quote(String.valueOf(DELIMITADOR)), -1);
+                if (!linea.startsWith("*") && partes.length > 0 && partes[0].equals(llaveABorrar)) {
                     int tamanoEspacio = linea.length() + 1;
                     availListActual.Insertar(posicionRegistro, tamanoEspacio);
                     availListActual.guardarEnArchivo(archivoActual, metadataActual);
@@ -157,8 +158,8 @@ public class ManejadorArchivo {
 
             while ((linea = this.archivoActual.readLine()) != null) {
                 posicionRegistro = this.archivoActual.getFilePointer() - (linea.length() + 1);
-
-                if (!linea.startsWith("*") && linea.startsWith(llaveAModificar)) {
+                String[] partes = linea.split(java.util.regex.Pattern.quote(String.valueOf(DELIMITADOR)), -1);
+                if (!linea.startsWith("*") && partes.length > 0 && partes[0].equals(llaveAModificar)) {
                     int tamanoMaximoSlot = linea.length();//Espacio sin el \n
                     int tamanoNuevoES = nuevoRegistroCompleto.length();
                     if (tamanoNuevoES <= tamanoMaximoSlot) {
