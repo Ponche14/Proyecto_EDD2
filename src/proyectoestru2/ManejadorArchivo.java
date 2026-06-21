@@ -9,6 +9,7 @@ public class ManejadorArchivo {
     private Metadata metadataActual;
     private java.util.ArrayList<Campo> listaCampos = new java.util.ArrayList<>();
     private AvailList availListActual = new AvailList();
+    public static final char DELIMITADOR = ';';
 
     public ManejadorArchivo() {
         this.archivoActual = null;

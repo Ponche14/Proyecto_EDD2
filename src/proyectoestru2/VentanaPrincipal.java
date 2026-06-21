@@ -801,16 +801,23 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 return; 
             }
 
+            if (entradaUsuario.contains(";")) {
+                javax.swing.JOptionPane.showMessageDialog(this, "El valor no puede contener ';'", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+            if (entradaUsuario.trim().isEmpty()) {
+                javax.swing.JOptionPane.showMessageDialog(this, "El campo no puede estar vacio", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             if (entradaUsuario.length() > longitudMaxima) {
                 entradaUsuario = entradaUsuario.substring(0, longitudMaxima);
-            } else {
-                while (entradaUsuario.length() < longitudMaxima) {
-                entradaUsuario += " ";
-                }
             }
-
+            
+            if (i > 0) {
+                registroEstructurado.append(ManejadorArchivo.DELIMITADOR);
+            }
             registroEstructurado.append(entradaUsuario);
-            filaTabla[i] = entradaUsuario.trim();
+            filaTabla[i] = entradaUsuario;
         }
 
         try {
