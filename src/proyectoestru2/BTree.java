@@ -108,7 +108,7 @@
 
         public void insert(Llave key) {
             BTreeNode r = root;
-            if (r.getNumKeys() == 2 * t - 1) {
+            if (r.getNumKeys() == t) {
                 BTreeNode s = new BTreeNode(t, false);
                 s.getChildren()[0] = r;
                 splitChild(s, 0);
@@ -118,29 +118,53 @@
         }
 
         private void insertNonFull(BTreeNode node, Llave key) {
-            int position = node.binarySearch(key.getKey());
-            if (position < 0) {
-                position = -position - 1;
-            }
-
+            int contKeys = node.getNumKeys()-1;
             if (node.isLeaf()) {
-                for (int j = node.getNumKeys(); j > position; j--) {
-                    node.getKeys()[j] = node.getKeys()[j - 1];
+                // codigo asisitdo por ai, no lograba encontrar la solucion a porque no podia comparar la llave con otra llave
+                // utilize gemini y el prompt fue: "porque esta linea me esta tirando error si los dos valores retornados por los metodos son comparable"
+                // de gemini solo saque las condiciones para los whiles
+                while (contKeys >= 0 && key.getKey().compareTo(node.getKeys()[contKeys].getKey()) < 0) {
+                    node.getKeys()[contKeys+1] = node.getKeys()[contKeys];
+                    contKeys--;
                 }
-                node.getKeys()[position] = key;
-                node.setNumKeys(node.getNumKeys() + 1);
+                node.getKeys()[contKeys+1] = key;
+                node.setNumKeys(node.getNumKeys()+1);
             } else {
-                if (node.getChildren()[position] != null
-                        && node.getChildren()[position].getNumKeys() == t - 1) {
-                    splitChild(node, position);
-                    if (key.getKey().compareTo(node.getKeys()[position].getKey()) > 0) {
-                        position++;
+                while (contKeys >= 0 && key.getKey().compareTo(node.getKeys()[contKeys].getKey())< 0) {
+                    contKeys--;
+                }
+                contKeys++;
+                if (node.getChildren()[contKeys].getNumKeys()==t) {
+                    splitChild(node, contKeys);
+                    if (key.getKey().compareTo(node.getKeys()[contKeys].getKey())>0) {
+                        contKeys++;
                     }
                 }
-                if (node.getChildren()[position] != null) {
-                    insertNonFull(node.getChildren()[position], key);
-                }
+                insertNonFull(node.getChildren()[contKeys], key);
             }
+            // codigo creado con ia
+//            int position = node.binarySearch(key.getKey());
+//            if (position < 0) {
+//                position = -position - 1;
+//            }
+//
+//            if (node.isLeaf()) {
+//                for (int j = node.getNumKeys(); j > position; j--) {
+//                    node.getKeys()[j] = node.getKeys()[j - 1];
+//                }
+//                node.getKeys()[position] = key;
+//                node.setNumKeys(node.getNumKeys() + 1);
+//            } else {
+//                if (node.getChildren()[position] != null && node.getChildren()[position].getNumKeys() == t) {
+//                    splitChild(node, position);
+//                    if (key.getKey().compareTo(node.getKeys()[position].getKey()) > 0) {
+//                        position++;
+//                    }
+//                }
+//                if (node.getChildren()[position] != null) {
+//                    insertNonFull(node.getChildren()[position], key);
+//                }
+//            }
         }
 
         // -------------------------------------------------------------------------
@@ -151,32 +175,56 @@
             BTreeNode fullChild = parent.getChildren()[index];
             BTreeNode newChild = new BTreeNode(t, fullChild.isLeaf());
 
-            int splitPoint = (t - 1) / 2;
-
-            for (int i = 0; i < t - 1 - splitPoint - 1; i++) {
-                newChild.getKeys()[i] = fullChild.getKeys()[i + splitPoint + 1];
+            int splitPoint = t/2;
+            
+            Llave promotedKey = fullChild.getKeys()[splitPoint];
+            int rightKeys = fullChild.getNumKeys() - splitPoint -1;
+            
+            for (int i = 0; i <= rightKeys; i++) {
+                newChild.getChildren()[i] = fullChild.getChildren()[splitPoint+1+i];
             }
-
+            
             if (!fullChild.isLeaf()) {
-                for (int i = 0; i < t - splitPoint - 1; i++) {
-                    newChild.getChildren()[i] = fullChild.getChildren()[i + splitPoint + 1];
+                for (int i = 0; i <= rightKeys;i++) {
+                    newChild.getChildren()[i] = fullChild.getChildren()[splitPoint+1+i];
                 }
             }
-
+            newChild.setNumKeys(rightKeys);
             fullChild.setNumKeys(splitPoint);
-            newChild.setNumKeys(t - 1 - splitPoint - 1);
-
             for (int i = parent.getNumKeys(); i > index; i--) {
-                parent.getKeys()[i] = parent.getKeys()[i - 1];
+                parent.getKeys()[i]=parent.getKeys()[i-1];
             }
-            parent.getKeys()[index] = fullChild.getKeys()[splitPoint];
-
-            for (int i = parent.getNumKeys() + 1; i > index + 1; i--) {
-                parent.getChildren()[i] = parent.getChildren()[i - 1];
+            parent.getKeys()[index]=promotedKey;
+            for (int i = parent.getNumKeys()+1;i>index+1;i--) {
+                parent.getChildren()[i]=parent.getChildren()[i-1];
             }
-            parent.getChildren()[index + 1] = newChild;
-
-            parent.setNumKeys(parent.getNumKeys() + 1);
+            parent.getChildren()[index+1] = newChild;
+            parent.setNumKeys(parent.getNumKeys()+1);
+// El codigo a continuacion era codigo que se habia hecho con el 2*t-1 con la ia, dejandolo aqui como evidencia de que se cambio
+//            for (int i = 0; i < t - 1 - splitPoint - 1; i++) {
+//                newChild.getKeys()[i] = fullChild.getKeys()[i + splitPoint + 1];
+//            }
+//
+//            if (!fullChild.isLeaf()) {
+//                for (int i = 0; i < t - splitPoint - 1; i++) {
+//                    newChild.getChildren()[i] = fullChild.getChildren()[i + splitPoint + 1];
+//                }
+//            }
+//
+//            fullChild.setNumKeys(splitPoint);
+//            newChild.setNumKeys(t - 1 - splitPoint - 1);
+//
+//            for (int i = parent.getNumKeys(); i > index; i--) {
+//                parent.getKeys()[i] = parent.getKeys()[i - 1];
+//            }
+//            parent.getKeys()[index] = fullChild.getKeys()[splitPoint];
+//
+//            for (int i = parent.getNumKeys() + 1; i > index + 1; i--) {
+//                parent.getChildren()[i] = parent.getChildren()[i - 1];
+//            }
+//            parent.getChildren()[index + 1] = newChild;
+//
+//            parent.setNumKeys(parent.getNumKeys() + 1);
         }
 
         public void crossTree(BTree btree2, File file, int[] campo1, int[] campo2) {
@@ -346,12 +394,12 @@
         
     // Método que define el nuevo número mínimo de claves por nodo
     private int getMinKeys() {
-        return (int) Math.floor((t - 1) / 2.0);
+        return (int) Math.floor((t) / 2.0);
     }
 
     // Método que define el número máximo de claves por nodo
     private int getMaxKeys() {
-        return t - 1;
+        return t;
     }
 
     // Elimina una clave de un nodo hoja
@@ -384,52 +432,118 @@
 // Fusiona dos nodos en el índice dado
     // Fusiona dos nodos en el índice dado
     private void mergeNodes(BTreeNode parent, int index) {
-        BTreeNode leftChild = parent.getChildren()[index];
-        BTreeNode rightChild = parent.getChildren()[index + 1];
-
-        // Mueve la clave del padre al nodo izquierdo
-        leftChild.getKeys()[leftChild.getNumKeys()] = parent.getKeys()[index];
-        for (int i = 0; i < rightChild.getNumKeys(); i++) {
-            leftChild.getKeys()[leftChild.getNumKeys() + 1 + i] = rightChild.getKeys()[i];
+        BTreeNode left = parent.getChildren()[index];
+        BTreeNode right = parent.getChildren()[index+1];
+        int leftNumKeys = left.getNumKeys();
+        left.getKeys()[leftNumKeys] = parent.getKeys()[index];
+        for (int i = 0; i < right.getNumKeys();i++) {
+            left.getKeys()[leftNumKeys+i+1] = right.getKeys()[i];
         }
-
-        if (!leftChild.isLeaf()) {
-            for (int i = 0; i <= rightChild.getNumKeys(); i++) {
-                leftChild.getChildren()[leftChild.getNumKeys() + 1 + i] = rightChild.getChildren()[i];
+        if (!left.isLeaf()) {
+            for (int i = 0; i <= right.getNumKeys();i++) {
+                left.getChildren()[leftNumKeys+i+1] = right.getChildren()[i];
             }
         }
-
-        // Ajusta el número de claves
-        leftChild.setNumKeys(leftChild.getNumKeys() + 1 + rightChild.getNumKeys());
-
-        // Mueve las claves del padre para llenar el vacío
-        for (int i = index; i < parent.getNumKeys() - 1; i++) {
-            parent.getKeys()[i] = parent.getKeys()[i + 1];
+        left.setNumKeys(leftNumKeys+1+right.getNumKeys());
+        for (int i = index; i < parent.getNumKeys(); i++){
+            parent.getKeys()[i] = parent.getKeys()[i+1];
         }
-
-        // Mueve los hijos del padre para llenar el vacío
-        for (int i = index + 1; i < parent.getNumKeys(); i++) {
-            parent.getChildren()[i] = parent.getChildren()[i + 1];
+        for (int i = index+1; i < parent.getNumKeys(); i++) {
+            parent.getChildren()[i] = parent.getChildren()[i+1];
         }
-
-        parent.setNumKeys(parent.getNumKeys() - 1);
+        parent.setNumKeys(parent.getNumKeys()-1);
+        // mismo caso que en split, codigo hecho con ia que fue reemplazado
+//        BTreeNode leftChild = parent.getChildren()[index];
+//        BTreeNode rightChild = parent.getChildren()[index + 1];
+//
+//        // Mueve la clave del padre al nodo izquierdo
+//        leftChild.getKeys()[leftChild.getNumKeys()] = parent.getKeys()[index];
+//        for (int i = 0; i < rightChild.getNumKeys(); i++) {
+//            leftChild.getKeys()[leftChild.getNumKeys() + 1 + i] = rightChild.getKeys()[i];
+//        }
+//
+//        if (!leftChild.isLeaf()) {
+//            for (int i = 0; i <= rightChild.getNumKeys(); i++) {
+//                leftChild.getChildren()[leftChild.getNumKeys() + 1 + i] = rightChild.getChildren()[i];
+//            }
+//        }
+//
+//        // Ajusta el número de claves
+//        leftChild.setNumKeys(leftChild.getNumKeys() + 1 + rightChild.getNumKeys());
+//
+//        // Mueve las claves del padre para llenar el vacío
+//        for (int i = index; i < parent.getNumKeys() - 1; i++) {
+//            parent.getKeys()[i] = parent.getKeys()[i + 1];
+//        }
+//
+//        // Mueve los hijos del padre para llenar el vacío
+//        for (int i = index + 1; i < parent.getNumKeys(); i++) {
+//            parent.getChildren()[i] = parent.getChildren()[i + 1];
+//        }
+//
+//        parent.setNumKeys(parent.getNumKeys() - 1);
     }
 
 // Arregla un hijo para que tenga al menos el mínimo de claves
     private void fixChild(BTreeNode parent, int index) {
         BTreeNode child = parent.getChildren()[index];
-
-        if (index > 0 && parent.getChildren()[index - 1].getNumKeys() >= getMinKeys()) {
-            moveKey(parent, index - 1, index);
-        } else if (index < parent.getNumKeys() && parent.getChildren()[index + 1].getNumKeys() >= getMinKeys()) {
-            moveKey(parent, index + 1, index);
-        } else {
-            if (index < parent.getNumKeys()) {
-                mergeNodes(parent, index);
-            } else {
-                mergeNodes(parent, index - 1);
-            }
+        if (child.getNumKeys() >= getMinKeys()) {
+            return;
         }
+        if (index > 0 && parent.getChildren()[index-1].getNumKeys() > getMinKeys()) {//getprev
+            BTreeNode sibling = parent.getChildren()[index-1];
+            for (int i = child.getNumKeys(); i > 0; i--) {
+                child.getKeys()[i] = child.getKeys()[i-1];
+            }
+            child.getKeys()[0] = parent.getKeys()[index-1];
+            if (!child.isLeaf()) {
+                for (int i = child.getNumKeys()+1;i>0;i--) {
+                    child.getChildren()[i] = child.getChildren()[i-1];
+                }
+                child.getChildren()[0] = sibling.getChildren()[sibling.getNumKeys()];
+            }
+            parent.getKeys()[index-1] = sibling.getKeys()[sibling.getNumKeys()-1];
+            sibling.setNumKeys(sibling.getNumKeys()-1);
+            child.setNumKeys(child.getNumKeys()+1);
+            return;
+        }
+        if (index < parent.getNumKeys() && parent.getChildren()[index+1].getNumKeys()>getMinKeys()) {//getnext
+            BTreeNode sibling = parent.getChildren()[index+1];
+            child.getKeys()[child.getNumKeys()] = parent.getKeys()[index];
+            if (!child.isLeaf()) {
+                child.getChildren()[child.getNumKeys()+1] = sibling.getChildren()[0];
+            }
+            parent.getKeys()[index] = sibling.getKeys()[0];
+            for (int i = 0; i < sibling.getNumKeys();i++) {
+                sibling.getKeys()[i] = sibling.getKeys()[i+1];
+            }
+            if (!sibling.isLeaf()) {
+                for (int i = 0; i < sibling.getNumKeys();i++) {
+                    sibling.getChildren()[i] = sibling.getChildren()[i+1];
+                }
+            }
+            sibling.setNumKeys(sibling.getNumKeys()-1);
+            child.setNumKeys(child.getNumKeys()+1);
+            return;
+        }
+        if (index < parent.getNumKeys()) {
+            mergeNodes(parent, index);
+        } else {
+            mergeNodes(parent, index-1);
+        }
+//        BTreeNode child = parent.getChildren()[index];
+//
+//        if (index > 0 && parent.getChildren()[index - 1].getNumKeys() >= getMinKeys()) {
+//            moveKey(parent, index - 1, index);
+//        } else if (index < parent.getNumKeys() && parent.getChildren()[index + 1].getNumKeys() >= getMinKeys()) {
+//            moveKey(parent, index + 1, index);
+//        } else {
+//            if (index < parent.getNumKeys()) {
+//                mergeNodes(parent, index);
+//            } else {
+//                mergeNodes(parent, index - 1);
+//            }
+//        }
     }
 
 // Mueve una clave entre nodos adyacentes

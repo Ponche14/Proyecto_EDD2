@@ -23,8 +23,8 @@ public class BTreeNode implements Serializable {
    public BTreeNode(int t, boolean leaf) {
         this.t = t;
         this.isLeaf = leaf;
-        this.keys = new Llave[2 * t - 1];
-        this.children = new BTreeNode[2 * t];
+        this.keys = new Llave[t];
+        this.children = new BTreeNode[t+1];
         this.numKeys = 0;
     }   
 
