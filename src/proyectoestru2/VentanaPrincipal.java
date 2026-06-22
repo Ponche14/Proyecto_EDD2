@@ -1023,7 +1023,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         BTreeNode curr = arbolB.getRoot();
         StringBuilder JSONBuilder = new StringBuilder();
         if (curr == null) {
-            JOptionPane.showMessageDialog(null, "Arbold Vacio");
+            JOptionPane.showMessageDialog(null, "Arbol Vacio");
         } else {
             JSONBuilder.append(JSONTreeBuilder(curr));
             String ruta = "BTREE.json";
