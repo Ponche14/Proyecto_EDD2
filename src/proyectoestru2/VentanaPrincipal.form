@@ -446,37 +446,43 @@
                   <Group type="102" attributes="0">
                       <EmptySpace min="43" pref="43" max="-2" attributes="0"/>
                       <Component id="jScrollPane2" min="-2" pref="693" max="-2" attributes="0"/>
-                      <EmptySpace min="38" pref="38" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="CargarRegistrosPruebaButton" min="-2" pref="169" max="-2" attributes="0"/>
-                          <Component id="InsertarRegistroButton" min="-2" pref="169" max="-2" attributes="0"/>
-                          <Component id="BuscarRegistroButton" min="-2" pref="169" max="-2" attributes="0"/>
-                          <Component id="ModificarRegistroButton" min="-2" pref="169" max="-2" attributes="0"/>
-                          <Component id="ListarRegistroButton" min="-2" pref="169" max="-2" attributes="0"/>
-                          <Component id="BorrarRegistroButton" min="-2" pref="169" max="-2" attributes="0"/>
+                      <EmptySpace pref="36" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                          <Component id="InsertarRegistroButton" alignment="0" max="32767" attributes="0"/>
+                          <Component id="CargarRegistrosPruebaButton" alignment="0" max="32767" attributes="0"/>
+                          <Component id="BuscarRegistroButton" max="32767" attributes="0"/>
+                          <Component id="ModificarRegistroButton" max="32767" attributes="0"/>
+                          <Component id="ListarRegistroButton" max="32767" attributes="0"/>
+                          <Component id="BorrarRegistroButton" max="32767" attributes="0"/>
+                          <Component id="CruzarArchivosButton" alignment="0" max="32767" attributes="0"/>
                       </Group>
+                      <EmptySpace min="-2" pref="40" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="22" pref="22" max="-2" attributes="0"/>
-                      <Component id="jScrollPane2" min="-2" pref="494" max="-2" attributes="0"/>
-                  </Group>
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="39" pref="39" max="-2" attributes="0"/>
-                      <Component id="CargarRegistrosPruebaButton" min="-2" pref="66" max="-2" attributes="0"/>
-                      <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                      <Component id="InsertarRegistroButton" min="-2" pref="66" max="-2" attributes="0"/>
-                      <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                      <Component id="BuscarRegistroButton" min="-2" pref="66" max="-2" attributes="0"/>
-                      <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                      <Component id="ModificarRegistroButton" min="-2" pref="66" max="-2" attributes="0"/>
-                      <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                      <Component id="ListarRegistroButton" min="-2" pref="66" max="-2" attributes="0"/>
-                      <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-                      <Component id="BorrarRegistroButton" min="-2" pref="66" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="CargarRegistrosPruebaButton" min="-2" pref="60" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="InsertarRegistroButton" min="-2" pref="54" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="BuscarRegistroButton" min="-2" pref="54" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="ModificarRegistroButton" min="-2" pref="60" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="ListarRegistroButton" min="-2" pref="60" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="BorrarRegistroButton" min="-2" pref="61" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="CruzarArchivosButton" min="-2" pref="60" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="jScrollPane2" min="-2" pref="494" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace min="-2" pref="4" max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -551,6 +557,14 @@
                 <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="ListarRegistroButtonMouseClicked"/>
               </Events>
             </Component>
+            <Component class="javax.swing.JButton" name="CruzarArchivosButton">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Cruzar Archivos"/>
+              </Properties>
+              <Events>
+                <EventHandler event="mouseClicked" listener="java.awt.event.MouseListener" parameters="java.awt.event.MouseEvent" handler="CruzarArchivosButtonMouseClicked"/>
+              </Events>
+            </Component>
           </SubComponents>
         </Container>
         <Container class="javax.swing.JPanel" name="jPanel2">
@@ -602,7 +616,7 @@
                           <Component id="ExportarJSONButton" min="-2" pref="47" max="-2" attributes="0"/>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Component id="ExportarXMLButton" min="-2" pref="47" max="-2" attributes="0"/>
-                          <EmptySpace pref="350" max="32767" attributes="0"/>
+                          <EmptySpace pref="354" max="32767" attributes="0"/>
                       </Group>
                   </Group>
                 </DimensionLayout>

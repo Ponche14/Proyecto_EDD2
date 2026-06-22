@@ -227,73 +227,46 @@
 //            parent.setNumKeys(parent.getNumKeys() + 1);
         }
 
-        public void crossTree(BTree btree2, File file, int[] campo1, int[] campo2) {
+        public void crossTree(BTree btree2, File file) {
             if (root != null && btree2.getRoot() != null) {
-                crossTreeNode(root, file, btree2, campo1, campo2);
+                crossTreeNode(root, file, btree2);
             } else {
                 System.out.println("Uno o ambos arboles estan vacios.");
             }
         }
 
-        private void crossTreeNode(BTreeNode node,
-                               File file,
-                               BTree btree2,
-                               int[] campo1,
-                               int[] campo2) {
-
+        private void crossTreeNode(BTreeNode node, File file, BTree btree2) {
         if (node == null) {
             return;
         }
-
         try (BufferedWriter bf = new BufferedWriter(new FileWriter(file, true))) {
-
             for (int i = 0; i < node.getNumKeys(); i++) {
-
                 Llave llave1 = node.getKeys()[i];
-
                 if (llave1 == null) {
                     continue;
                 }
-
                 BTreeNode encontrado = btree2.search(llave1.getKey());
-
                 if (encontrado == null) {
                     continue;
                 }
-
                 int pos = encontrado.binarySearch(llave1.getKey());
-
                 if (pos < 0) {
                     continue;
                 }
-
                 Llave llave2 = encontrado.getKeys()[pos];
-
                 bf.write(
                         llave1.getKey() + " | offset1="
                         + llave1.getOffset()
                         + " | offset2="
                         + llave2.getOffset());
-
                 bf.newLine();
             }
-
         } catch (IOException ex) {
-
-            Logger.getLogger(BTree.class.getName())
-                    .log(Level.SEVERE, null, ex);
+            Logger.getLogger(BTree.class.getName()).log(Level.SEVERE, null, ex);
         }
-
         for (int i = 0; i <= node.getNumKeys(); i++) {
-
             if (node.getChildren()[i] != null) {
-
-                crossTreeNode(
-                        node.getChildren()[i],
-                        file,
-                        btree2,
-                        campo1,
-                        campo2);
+                crossTreeNode(node.getChildren()[i], file, btree2);
             }
         }
     }
