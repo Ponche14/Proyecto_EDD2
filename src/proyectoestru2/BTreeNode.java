@@ -76,7 +76,7 @@ public class BTreeNode implements Serializable {
             }
         }
 
-        return -1; // retorna un negativo si no se encontro
+        return -(left+1); // retorna un negativo si no se encontro
     }
 
     public String toString() {

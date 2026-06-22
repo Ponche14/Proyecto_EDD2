@@ -90,17 +90,16 @@
         private BTreeNode searchInNode(BTreeNode node, Object key) {
             int index = node.binarySearch(key);
 
-            if (index >= 0 && index < node.getNumKeys()
-                    && node.getKeys()[index].getKey().equals(key)) {
+            if (index >= 0 && index < node.getNumKeys() && node.getKeys()[index].getKey().equals(key)) { // valida si el nodo se ha encontrado
                 return node;
             }
 
-            if (node.isLeaf()) {
+            if (node.isLeaf()) { // si el nodo no se encontro y es hoja entonces retorna null
                 return null;
             }
 
-            int childIndex = (index >= 0) ? index : -(index + 1);
-            return searchInNode(node.getChildren()[childIndex], key);
+            int childIndex = (index >= 0) ? index : -(index + 1); 
+            return searchInNode(node.getChildren()[childIndex], key);// si la posicion del nodo deberia de existir pero no existe entonces esta validacion se asegura de que se va a buscar en un nodo hijo, de no ser un nodo hoja claro
         }
 
         // -------------------------------------------------------------------------
