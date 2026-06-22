@@ -68,25 +68,25 @@ public class BTreeNode implements Serializable {
             int cmp = midKey.compareTo(searchKey);
 
             if (cmp == 0) {
-                return mid; // Key found
+                return mid; 
             } else if (cmp < 0) {
-                left = mid + 1; // Search right half
+                left = mid + 1; 
             } else {
-                right = mid - 1; // Search left half
+                right = mid - 1; 
             }
         }
 
-        return -(left + 1); // Return insertion point as a negative value
+        return -1; // retorna un negativo si no se encontro
     }
 
     public String toString() {
         if (numKeys == 0) {
-            return "Nodo vacío"; // O cualquier mensaje que te ayude a ver que el nodo está vacío
+            return "Nodo vacío";
         }
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < numKeys; i++) {
             sb.append(keys[i]).append(" ");
         }
-        return sb.toString().trim();  // Devuelve las claves como una cadena separada por espacios
+        return sb.toString().trim(); 
     }
 }
