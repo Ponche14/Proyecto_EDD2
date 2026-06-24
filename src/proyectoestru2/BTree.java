@@ -518,24 +518,5 @@
 //                mergeNodes(parent, index - 1);
 //            }
 //        }
-    }
-
-// Mueve una clave entre nodos adyacentes
-    private void moveKey(BTreeNode parent, int fromIndex, int toIndex) {
-        BTreeNode fromChild = parent.getChildren()[fromIndex];
-        BTreeNode toChild = parent.getChildren()[toIndex];
-
-        if (fromIndex < toIndex) {
-            toChild.getKeys()[toChild.getNumKeys()] = parent.getKeys()[fromIndex];
-            parent.getKeys()[fromIndex] = fromChild.getKeys()[fromChild.getNumKeys() - 1];
-            fromChild.setNumKeys(fromChild.getNumKeys() - 1);
-        } else {
-            for (int i = toChild.getNumKeys(); i > 0; i--) {
-                toChild.getKeys()[i] = toChild.getKeys()[i - 1];
-            }
-            toChild.getKeys()[0] = parent.getKeys()[fromIndex];
-            parent.getKeys()[fromIndex] = fromChild.getKeys()[fromChild.getNumKeys() - 1];
-            fromChild.setNumKeys(fromChild.getNumKeys() - 1);
         }
     }
-}

@@ -52,6 +52,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         CrearArchivoButton = new javax.swing.JButton();
         CerrarArchivoButton = new javax.swing.JButton();
         GuardarArchivoButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
         CampoPanel = new javax.swing.JPanel();
         CrearCampoButton = new javax.swing.JButton();
         CampoVariable = new javax.swing.JButton();
@@ -213,24 +214,36 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Salir de Sistema");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout ArchivoPanelLayout = new javax.swing.GroupLayout(ArchivoPanel);
         ArchivoPanel.setLayout(ArchivoPanelLayout);
         ArchivoPanelLayout.setHorizontalGroup(
             ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ArchivoPanelLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(AbrirArchivoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(585, 585, 585)
-                .addComponent(EstadoArchivoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ArchivoPanelLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(CerrarArchivoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ArchivoPanelLayout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(CrearArchivoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(ArchivoPanelLayout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(GuardarArchivoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ArchivoPanelLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(AbrirArchivoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(585, 585, 585)
+                        .addComponent(EstadoArchivoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ArchivoPanelLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(CerrarArchivoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ArchivoPanelLayout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addComponent(CrearArchivoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(ArchivoPanelLayout.createSequentialGroup()
+                        .addGap(21, 21, 21)
+                        .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(GuardarArchivoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(63, Short.MAX_VALUE))
         );
         ArchivoPanelLayout.setVerticalGroup(
             ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -244,7 +257,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 .addGap(6, 6, 6)
                 .addComponent(CrearArchivoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(6, 6, 6)
-                .addComponent(GuardarArchivoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(GuardarArchivoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
 
         PanelPrincipal.addTab("Archivos", ArchivoPanel);
@@ -1111,6 +1127,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
 
     }//GEN-LAST:event_CruzarArchivosButtonMouseClicked
+
+    private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
+        System.exit(0);
+    }//GEN-LAST:event_jButton1MouseClicked
     
     private StringBuilder XMLTreeBuilder(BTreeNode curr){
         StringBuilder tempBuilder = new StringBuilder();
@@ -1297,6 +1317,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTable TableCampos;
     private javax.swing.JComboBox<String> TipoCampoComboBox;
     private javax.swing.JLabel TipoCampoLabel;
+    private javax.swing.JButton jButton1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
