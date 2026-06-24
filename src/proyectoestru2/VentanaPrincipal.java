@@ -74,6 +74,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         ExportarJSONButton = new javax.swing.JButton();
         ExportarXMLButton = new javax.swing.JButton();
+        jLabel2 = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -177,6 +178,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        getContentPane().setLayout(null);
 
         PanelPrincipal.setBackground(new java.awt.Color(204, 204, 204));
         PanelPrincipal.setForeground(new java.awt.Color(0, 0, 0));
@@ -253,7 +255,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                     .addComponent(CerrarArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(403, 403, 403)
                 .addComponent(EstadoArchivoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addContainerGap(71, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ArchivoPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -271,7 +273,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(GuardarArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
                     .addComponent(CrearArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 263, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 312, Short.MAX_VALUE)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(26, 26, 26))
         );
@@ -280,6 +282,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         CampoPanel.setBackground(new java.awt.Color(204, 204, 255));
 
+        CrearCampoButton.setBackground(new java.awt.Color(204, 255, 204));
+        CrearCampoButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        CrearCampoButton.setForeground(new java.awt.Color(0, 0, 0));
         CrearCampoButton.setText("Crear Campo");
         CrearCampoButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -287,8 +292,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
-        CampoVariable.setText("CampoVariable");
+        CampoVariable.setText("Listar Campos");
+        CampoVariable.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CampoVariableMouseClicked(evt);
+            }
+        });
 
+        ModificarCampoButton.setBackground(new java.awt.Color(255, 204, 255));
+        ModificarCampoButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        ModificarCampoButton.setForeground(new java.awt.Color(0, 0, 0));
         ModificarCampoButton.setText("Modificar Campo");
         ModificarCampoButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -296,6 +309,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        EliminarCampoButton.setBackground(new java.awt.Color(255, 204, 204));
+        EliminarCampoButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        EliminarCampoButton.setForeground(new java.awt.Color(0, 0, 0));
         EliminarCampoButton.setText("Eliminar Campo");
         EliminarCampoButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -303,6 +319,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        TableCampos.setBackground(new java.awt.Color(255, 255, 204));
         TableCampos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -333,23 +350,27 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         CampoPanelLayout.setVerticalGroup(
             CampoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(CampoPanelLayout.createSequentialGroup()
-                .addGap(70, 70, 70)
-                .addComponent(CrearCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
-                .addComponent(CampoVariable, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
-                .addComponent(ModificarCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(9, 9, 9)
-                .addComponent(EliminarCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
-            .addGroup(CampoPanelLayout.createSequentialGroup()
-                .addGap(20, 20, 20)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGroup(CampoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(CampoPanelLayout.createSequentialGroup()
+                        .addGap(70, 70, 70)
+                        .addComponent(CrearCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(9, 9, 9)
+                        .addComponent(CampoVariable, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(9, 9, 9)
+                        .addComponent(ModificarCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(9, 9, 9)
+                        .addComponent(EliminarCampoButton, javax.swing.GroupLayout.PREFERRED_SIZE, 61, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(CampoPanelLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(79, Short.MAX_VALUE))
         );
 
         PanelPrincipal.addTab("Campos", CampoPanel);
 
         RegistroPanel.setBackground(new java.awt.Color(204, 204, 255));
 
+        RegistrosTable.setBackground(new java.awt.Color(255, 255, 204));
         RegistrosTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null},
@@ -363,6 +384,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         ));
         jScrollPane2.setViewportView(RegistrosTable);
 
+        BorrarRegistroButton.setBackground(new java.awt.Color(255, 204, 204));
+        BorrarRegistroButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        BorrarRegistroButton.setForeground(new java.awt.Color(0, 0, 0));
         BorrarRegistroButton.setText("Borrar Registro");
         BorrarRegistroButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -370,6 +394,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        CargarRegistrosPruebaButton.setBackground(new java.awt.Color(0, 0, 0));
+        CargarRegistrosPruebaButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         CargarRegistrosPruebaButton.setText("Cargar Registros Prueba");
         CargarRegistrosPruebaButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -377,6 +403,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        InsertarRegistroButton.setBackground(new java.awt.Color(204, 255, 204));
+        InsertarRegistroButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        InsertarRegistroButton.setForeground(new java.awt.Color(0, 0, 0));
         InsertarRegistroButton.setText("Insertar Registro");
         InsertarRegistroButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -384,6 +413,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        BuscarRegistroButton.setBackground(new java.awt.Color(255, 255, 204));
+        BuscarRegistroButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        BuscarRegistroButton.setForeground(new java.awt.Color(0, 0, 0));
         BuscarRegistroButton.setText("Buscar Registro");
         BuscarRegistroButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -391,6 +423,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        ModificarRegistroButton.setBackground(new java.awt.Color(255, 255, 204));
+        ModificarRegistroButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        ModificarRegistroButton.setForeground(new java.awt.Color(0, 0, 0));
         ModificarRegistroButton.setText("Modificar Registro");
         ModificarRegistroButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -398,6 +433,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        ListarRegistroButton.setBackground(new java.awt.Color(255, 255, 204));
+        ListarRegistroButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        ListarRegistroButton.setForeground(new java.awt.Color(0, 0, 0));
         ListarRegistroButton.setText("Listar Registro");
         ListarRegistroButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -405,6 +443,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        CruzarArchivosButton.setBackground(new java.awt.Color(0, 0, 0));
+        CruzarArchivosButton.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
         CruzarArchivosButton.setText("Cruzar Archivos");
         CruzarArchivosButton.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -419,7 +459,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             .addGroup(RegistroPanelLayout.createSequentialGroup()
                 .addGap(43, 43, 43)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 693, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 36, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(RegistroPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(InsertarRegistroButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(CargarRegistrosPruebaButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -455,6 +495,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         PanelPrincipal.addTab("Registros", RegistroPanel);
 
+        jPanel2.setLayout(null);
+
         jPanel3.setBackground(new java.awt.Color(204, 204, 255));
 
         ExportarJSONButton.setBackground(new java.awt.Color(204, 255, 204));
@@ -477,6 +519,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/proyectoestru2/[CITYPNG.COM]Pink Directory Computer Folder Icon - 800x800.png"))); // NOI18N
+        jLabel2.setText("jLabel2");
+
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
         jPanel3Layout.setHorizontalGroup(
@@ -484,45 +529,34 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(32, 32, 32)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(ExportarXMLButton, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(ExportarJSONButton, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(711, Short.MAX_VALUE))
+                    .addComponent(ExportarJSONButton, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(ExportarXMLButton, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(87, 87, 87)
+                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 712, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
-                .addGap(51, 51, 51)
-                .addComponent(ExportarJSONButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(ExportarXMLButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(297, Short.MAX_VALUE))
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(51, 51, 51)
+                        .addComponent(ExportarJSONButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(ExportarXMLButton, javax.swing.GroupLayout.PREFERRED_SIZE, 83, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addGap(71, 71, 71)
+                        .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 566, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(0, 323, Short.MAX_VALUE))
         );
 
-        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
-        jPanel2.setLayout(jPanel2Layout);
-        jPanel2Layout.setHorizontalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
-        jPanel2Layout.setVerticalGroup(
-            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-        );
+        jPanel2.add(jPanel3);
+        jPanel3.setBounds(0, 0, 968, 960);
 
         PanelPrincipal.addTab("Exportar", jPanel2);
 
-        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-        getContentPane().setLayout(layout);
-        layout.setHorizontalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(PanelPrincipal)
-        );
-        layout.setVerticalGroup(
-            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addComponent(PanelPrincipal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(0, 0, Short.MAX_VALUE))
-        );
+        getContentPane().add(PanelPrincipal);
+        PanelPrincipal.setBounds(0, 0, 976, 995);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1150,6 +1184,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private void jButton1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton1MouseClicked
         System.exit(0);
     }//GEN-LAST:event_jButton1MouseClicked
+
+    private void CampoVariableMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CampoVariableMouseClicked
+        
+    }//GEN-LAST:event_CampoVariableMouseClicked
     
     private StringBuilder XMLTreeBuilder(BTreeNode curr){
         StringBuilder tempBuilder = new StringBuilder();
@@ -1337,6 +1375,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JComboBox<String> TipoCampoComboBox;
     private javax.swing.JLabel TipoCampoLabel;
     private javax.swing.JButton jButton1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
