@@ -108,39 +108,39 @@
 
         public void insert(Llave key) {
             BTreeNode r = root;
-            if (r.getNumKeys() == t) {
+            if (r.getNumKeys() == t) {//si la raiz esta llena o en overflow entonces se hace un split 
                 BTreeNode s = new BTreeNode(t, false);
-                s.getChildren()[0] = r;
-                splitChild(s, 0);
+                s.getChildren()[0] = r;//asignamos la raiz como el hijo de el nuevo nodo
+                splitChild(s, 0);// split para que s quede como el padre de ambos
                 root = s;
             }
-            insertNonFull(root, key);
+            insertNonFull(root, key);//llamamos el metodo para insertar en un nodo que no esta lleno
         }
 
         private void insertNonFull(BTreeNode node, Llave key) {
-            int contKeys = node.getNumKeys()-1;
-            if (node.isLeaf()) {
+            int indice = node.getNumKeys()-1;//creamos el indice para uso en el metodo
+            if (node.isLeaf()) {// si el nodo es hoja empezamos con la insercion normal
                 // codigo asisitdo por ai, no lograba encontrar la solucion a porque no podia comparar la llave con otra llave
                 // utilize gemini y el prompt fue: "porque esta linea me esta tirando error si los dos valores retornados por los metodos son comparable"
                 // de gemini solo saque las condiciones para los whiles
-                while (contKeys >= 0 && key.getKey().compareTo(node.getKeys()[contKeys].getKey()) < 0) {
-                    node.getKeys()[contKeys+1] = node.getKeys()[contKeys];
-                    contKeys--;
+                while (indice >= 0 && key.getKey().compareTo(node.getKeys()[indice].getKey()) < 0) {//recorremos las llaves del nodo para encontrar
+                    node.getKeys()[indice+1] = node.getKeys()[indice];// la posicion correcta de la nueva llave
+                    indice--;
                 }
-                node.getKeys()[contKeys+1] = key;
-                node.setNumKeys(node.getNumKeys()+1);
-            } else {
-                while (contKeys >= 0 && key.getKey().compareTo(node.getKeys()[contKeys].getKey())< 0) {
-                    contKeys--;
+                node.getKeys()[indice+1] = key;//asignamos la nueva llave una vez que encontremos la posicion correcta
+                node.setNumKeys(node.getNumKeys()+1);//incrementamos la cantidad de llaves del nodo hoja
+            } else {//si no es hoja entonces recorremos el nodo para encontrar el indice de los hijos a donde vamos a meter el nodo
+                while (indice >= 0 && key.getKey().compareTo(node.getKeys()[indice].getKey())< 0) {
+                    indice--;
                 }
-                contKeys++;
-                if (node.getChildren()[contKeys].getNumKeys()==t) {
-                    splitChild(node, contKeys);
-                    if (key.getKey().compareTo(node.getKeys()[contKeys].getKey())>0) {
-                        contKeys++;
+                indice++;//se asegura de que empezamos en el primer nodo
+                if (node.getChildren()[indice].getNumKeys()==t) {
+                    splitChild(node, indice);// si el nodo esta en overflow entonces se hace un split
+                    if (key.getKey().compareTo(node.getKeys()[indice].getKey())>0) {//Si el hijo en el que estamos no es el correcto, recorremos el
+                        indice++;//el nodo de nuevo para encontrar una posicion mas optima
                     }
                 }
-                insertNonFull(node.getChildren()[contKeys], key);
+                insertNonFull(node.getChildren()[indice], key);//se vuelve a llamar el metodo hasta encontrar una hoja adonde iria la nueva llave
             }
             // codigo creado con ia
 //            int position = node.binarySearch(key.getKey());
@@ -172,34 +172,36 @@
         // -------------------------------------------------------------------------
 
         private void splitChild(BTreeNode parent, int index) {
-            BTreeNode fullChild = parent.getChildren()[index];
-            BTreeNode newChild = new BTreeNode(t, fullChild.isLeaf());
+            BTreeNode fullChild = parent.getChildren()[index]; // agarramos el hijo al que se le va a hacer split
+            BTreeNode newChild = new BTreeNode(t, fullChild.isLeaf());//creamos un nuevo hijo hoja para ingresar los valores que se van a separar
 
-            int splitPoint = t/2;
+            int splitPoint = t/2;// el lugar donde se haria el split seria la mitad del nodo
             
-            Llave promotedKey = fullChild.getKeys()[splitPoint];
-            int rightKeys = fullChild.getNumKeys() - splitPoint -1;
+            Llave promotedKey = fullChild.getKeys()[splitPoint];// la llave que seria promovida al padre
+            int rightKeys = fullChild.getNumKeys() - splitPoint -1;//La cantidad de llaves que vamos a mover para el hijo nuevo
             
             for (int i = 0; i <= rightKeys; i++) {
-                newChild.getChildren()[i] = fullChild.getChildren()[splitPoint+1+i];
+                newChild.getKeys()[i] = fullChild.getKeys()[splitPoint+1+i];//movemos las llaves de el hijo lleno a la nueva llave
+                fullChild.getKeys()[i+splitPoint+1] = null;//se eliminan las llaves de el nodo que estaba lleno
             }
             
-            if (!fullChild.isLeaf()) {
+            if (!fullChild.isLeaf()) {//verifica si el nodo que estaba lleno es hoja, si no lo es
                 for (int i = 0; i <= rightKeys;i++) {
-                    newChild.getChildren()[i] = fullChild.getChildren()[splitPoint+1+i];
+                    newChild.getChildren()[i] = fullChild.getChildren()[splitPoint+1+i];//movemos tambien los hijos como se hizo con las llaves
+                    fullChild.getChildren()[i+splitPoint+1] = null;
                 }
             }
-            newChild.setNumKeys(rightKeys);
-            fullChild.setNumKeys(splitPoint);
-            for (int i = parent.getNumKeys(); i > index; i--) {
-                parent.getKeys()[i]=parent.getKeys()[i-1];
+            newChild.setNumKeys(rightKeys);//asignacion de la cantidad de llaves
+            fullChild.setNumKeys(splitPoint);//asignacion de la cantidad de llaves que le quedan
+            for (int i = parent.getNumKeys(); i > index; i--) {//recorremos el padre para movilizar las llaves de forma que el espacio para
+                parent.getKeys()[i]=parent.getKeys()[i-1];//que la nueva posicion de la llave quede vacia
             }
-            parent.getKeys()[index]=promotedKey;
-            for (int i = parent.getNumKeys()+1;i>index+1;i--) {
-                parent.getChildren()[i]=parent.getChildren()[i-1];
+            parent.getKeys()[index]=promotedKey;//asignamos la llave que se promovio al padre
+            for (int i = parent.getNumKeys()+1;i>index+1;i--) {//recorremos el padre para organizar los hijos de manera
+                parent.getChildren()[i]=parent.getChildren()[i-1];//que el espacio para el newChild quede en su lugar correcto
             }
-            parent.getChildren()[index+1] = newChild;
-            parent.setNumKeys(parent.getNumKeys()+1);
+            parent.getChildren()[index+1] = newChild;//se asigna el newChild a su posicion
+            parent.setNumKeys(parent.getNumKeys()+1);//incrementamos la cantidad de llaves que tiene el arbol
 // El codigo a continuacion era codigo que se habia hecho con el 2*t-1 con la ia, dejandolo aqui como evidencia de que se cambio
 //            for (int i = 0; i < t - 1 - splitPoint - 1; i++) {
 //                newChild.getKeys()[i] = fullChild.getKeys()[i + splitPoint + 1];
@@ -302,33 +304,31 @@
         // -------------------------------------------------------------------------
 
         public void delete(Comparable key) {
-            if (root == null) {
+            if (root == null) {//valida que exista un arbol
                 System.out.println("El arbol esta vacio.");
                 return;
             }
 
-            deleteKey(root, key);
+            deleteKey(root, key);//en caso de que si exista un arbol se llama el metodo para borrar una llave
 
-            if (root.getNumKeys() == 0 && !root.isLeaf()) {
+            if (root.getNumKeys() == 0 && !root.isLeaf()) {//si la llave se encuentra en la raiz y queda vacia el primer hijo toma su lugar
                 root = root.getChildren()[0];
             }
         }
 
         @SuppressWarnings("unchecked")
         private void deleteKey(BTreeNode node, Comparable key) {
-            int position = node.binarySearch(key);
+            int position = node.binarySearch(key);//se llama el metodo de busqueda binaria para encontrar la posicion de la lalve
 
-            if (position >= 0 && position < node.getNumKeys()
-                    && node.getKeys()[position].getKey().compareTo(key) == 0) {
-
-                if (node.isLeaf()) {
-                    removeKey(node, position);
+            if (position >= 0 && position < node.getNumKeys() && node.getKeys()[position].getKey().compareTo(key) == 0) {
+                //si la posicion esta adentro del arreglo de llaves
+                if (node.isLeaf()) {//validamos is es hoja
+                    removeKey(node, position);// si es hoja se llama el metodo que borra la llave
                 } else {
-                    if (node.getChildren()[position].getNumKeys() >= getMinKeys()) {
-                        Llave predecessorKey = findPredecessorKey(node, position);
-                        node.getKeys()[position] = predecessorKey;
-                        deleteKey(node.getChildren()[position], predecessorKey.getKey());
-
+                    if (node.getChildren()[position].getNumKeys() >= getMinKeys()) {//si el nodo no es hoja y nos tenemos una posicion valida entonces
+                        Llave predecessorKey = findPredecessorKey(node, position);//verificamos que el nodo anterior no este en underflow para
+                        node.getKeys()[position] = predecessorKey;//pedir una llave de el, -]
+                        deleteKey(node.getChildren()[position], predecessorKey.getKey());//se vuelve a llamar el metodo para buscar en el hijo
                     } else if (node.getChildren()[position + 1].getNumKeys() >= getMinKeys()) {
                         Llave successorKey = findSuccessorKey(node, position);
                         node.getKeys()[position] = successorKey;
@@ -388,7 +388,7 @@
     private Llave findPredecessorKey(BTreeNode node, int index) {
         BTreeNode child = node.getChildren()[index];
         while (!child.isLeaf()) {
-            child = child.getChildren()[child.getNumKeys()];
+            child = child.getChildren()[child.getNumKeys()];//recorre un lado entero del arbol hasta encontrar un nodo hoja
         }
         return child.getKeys()[child.getNumKeys() - 1];
     }
@@ -409,6 +409,7 @@
         BTreeNode right = parent.getChildren()[index+1];
         int leftNumKeys = left.getNumKeys();
         left.getKeys()[leftNumKeys] = parent.getKeys()[index];
+        parent.getKeys()[index] = null;
         for (int i = 0; i < right.getNumKeys();i++) {
             left.getKeys()[leftNumKeys+i+1] = right.getKeys()[i];
         }
