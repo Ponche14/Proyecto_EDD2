@@ -1167,82 +1167,84 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_ListarRegistroButtonMouseClicked
 
     private void ExportarJSONButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ExportarJSONButtonMouseClicked
-        BTreeNode curr = arbolB.getRoot();
-        StringBuilder JSONBuilder = new StringBuilder();
-        if (curr == null) {
-            JOptionPane.showMessageDialog(null, "Arbol Vacio");
-        } else {
-            JSONBuilder.append(JSONTreeBuilder(curr));
-            String ruta = "BTREE.json";
-            try(BufferedWriter w = new BufferedWriter(new FileWriter(ruta))){
-                w.write(JSONBuilder.toString());
-                JOptionPane.showMessageDialog(null, "Exportacion Exitosa");
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "Error al momento de exportar el archivo");
-            }
-        }
+        JOptionPane.showMessageDialog(null, "Hubieron problemas con la implementacion entonces este boton ha sido desactivado");
+//        BTreeNode curr = arbolB.getRoot();
+//        StringBuilder JSONBuilder = new StringBuilder();
+//        if (curr == null) {
+//            JOptionPane.showMessageDialog(null, "Arbol Vacio");
+//        } else {
+//            JSONBuilder.append(JSONTreeBuilder(curr));
+//            String ruta = "BTREE.txt";
+//            try(BufferedWriter w = new BufferedWriter(new FileWriter(ruta))){
+//                w.write(JSONBuilder.toString());
+//                JOptionPane.showMessageDialog(null, "Exportacion Exitosa");
+//            } catch (IOException e) {
+//                JOptionPane.showMessageDialog(null, "Error al momento de exportar el archivo");
+//            }
+//        }
     }//GEN-LAST:event_ExportarJSONButtonMouseClicked
 
     private void ExportarXMLButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_ExportarXMLButtonMouseClicked
-        BTreeNode curr = arbolB.getRoot();
-        StringBuilder XMLBuilder = new StringBuilder();
-        XMLBuilder.append("<Root>Root</Root>\n" );
-        if (curr == null) {
-            JOptionPane.showMessageDialog(null, "Arbol Vacio");
-        } else {
-            XMLTreeBuilder(curr);
-            String ruta = "BTREE.xml";
-            try(BufferedWriter w = new BufferedWriter(new FileWriter(ruta))){
-                w.write(XMLBuilder.toString());
-                JOptionPane.showMessageDialog(null, "Exportacion Exitosa");
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(null, "Error al momento de exportar el archivo");
-            }
-        }
+        JOptionPane.showMessageDialog(null, "Hubieron problemas con la implementacion entonces este boton ha sido desactivado");
+//        BTreeNode curr = arbolB.getRoot();
+//        StringBuilder XMLBuilder = new StringBuilder();
+//        XMLBuilder.append("<Root>Root</Root>\n" );
+//        if (curr == null) {
+//            JOptionPane.showMessageDialog(null, "Arbol Vacio");
+//        } else {
+//            XMLTreeBuilder(curr);
+//            String ruta = "BTREE.txt";
+//            try(BufferedWriter w = new BufferedWriter(new FileWriter(ruta))){
+//                w.write(XMLBuilder.toString());
+//                JOptionPane.showMessageDialog(null, "Exportacion Exitosa");
+//            } catch (IOException e) {
+//                JOptionPane.showMessageDialog(null, "Error al momento de exportar el archivo");
+//            }
+//        }
     }//GEN-LAST:event_ExportarXMLButtonMouseClicked
 
     private void CargarRegistrosPruebaButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CargarRegistrosPruebaButtonMouseClicked
-        JFileChooser fileChooser = new JFileChooser();
-        int validacion = fileChooser.showOpenDialog(null);
-        StringBuilder registroPrueba = new StringBuilder();
-        if (validacion == JFileChooser.APPROVE_OPTION) {
-            if(!dbms.isArchivoAbierto()){
-                JOptionPane.showMessageDialog(null, "No hay archivos abiertos");
-            } else {
-                for (int i = 0; i < dbms.getListaCampos().size();i++) {
-                    switch(dbms.getListaCampos().get(i).getTipo()){
-                        case 'S':
-                            registroPrueba.append("String ");
-                            break;
-                        case 'I':
-                            registroPrueba.append("1000 ");
-                            break;
-                        case 'F':
-                            registroPrueba.append("1000 ");
-                            break;
-                        case 'C':
-                            registroPrueba.append("A ");
-                            break;
-                        default:
-                            registroPrueba.append("Prueba ");
-                            break;
-                    }
-                    dbms.escribirRegistro(registroPrueba.toString());
-                }
-            }
-            
-        }
+//        JFileChooser fileChooser = new JFileChooser();
+//        int validacion = fileChooser.showOpenDialog(null);
+//        StringBuilder registroPrueba = new StringBuilder();
+//        if (validacion == JFileChooser.APPROVE_OPTION) {
+//            if(!dbms.isArchivoAbierto()){
+//                JOptionPane.showMessageDialog(null, "No hay archivos abiertos");
+//            } else {
+//                for (int i = 0; i < dbms.getListaCampos().size();i++) {
+//                    switch(dbms.getListaCampos().get(i).getTipo()){
+//                        case 'S':
+//                            registroPrueba.append("String ");
+//                            break;
+//                        case 'I':
+//                            registroPrueba.append("1000 ");
+//                            break;
+//                        case 'F':
+//                            registroPrueba.append("1000 ");
+//                            break;
+//                        case 'C':
+//                            registroPrueba.append("A ");
+//                            break;
+//                        default:
+//                            registroPrueba.append("Prueba ");
+//                            break;
+//                    }
+//                    dbms.escribirRegistro(registroPrueba.toString());
+//                }
+//            }
+//            
+//        }
     }//GEN-LAST:event_CargarRegistrosPruebaButtonMouseClicked
 
     private void CruzarArchivosButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CruzarArchivosButtonMouseClicked
-        JFileChooser fileChooser = new JFileChooser();
-        int seleccion = fileChooser.showOpenDialog(null);
-        if (seleccion == JFileChooser.APPROVE_OPTION) {
-            File file = fileChooser.getSelectedFile();
-            ManejadorArchivo dbms2 = new ManejadorArchivo();
-            dbms2.abrirArchivo(file.getAbsolutePath());
-            //arbolB.crossTree(dbms2.getMetadataActual().getRootArbolB(), file);
-        }
+//        JFileChooser fileChooser = new JFileChooser();
+//        int seleccion = fileChooser.showOpenDialog(null);
+//        if (seleccion == JFileChooser.APPROVE_OPTION) {
+//            File file = fileChooser.getSelectedFile();
+//            ManejadorArchivo dbms2 = new ManejadorArchivo();
+//            dbms2.abrirArchivo(file.getAbsolutePath());
+//            //arbolB.crossTree(dbms2.getMetadataActual().getRootArbolB(), file);
+//        }
 
     }//GEN-LAST:event_CruzarArchivosButtonMouseClicked
 
