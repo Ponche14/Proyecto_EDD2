@@ -505,18 +505,5 @@
         } else {
             mergeNodes(parent, index-1);
         }
-//        BTreeNode child = parent.getChildren()[index];
-//
-//        if (index > 0 && parent.getChildren()[index - 1].getNumKeys() >= getMinKeys()) {
-//            moveKey(parent, index - 1, index);
-//        } else if (index < parent.getNumKeys() && parent.getChildren()[index + 1].getNumKeys() >= getMinKeys()) {
-//            moveKey(parent, index + 1, index);
-//        } else {
-//            if (index < parent.getNumKeys()) {
-//                mergeNodes(parent, index);
-//            } else {
-//                mergeNodes(parent, index - 1);
-//            }
-//        }
-        }
     }
+}
