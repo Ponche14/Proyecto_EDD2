@@ -10,6 +10,7 @@ public class Metadata {
     private int posLlaveSecundaria;
     private ArrayList<Campo> campos;
     private long offsetInicio;
+    public static final long TAMANIO_RESERVADO = 500;
 
     public Metadata() {
         this.headAvaiList = -1;
@@ -22,12 +23,11 @@ public class Metadata {
     
     public void guardar(java.io.RandomAccessFile file) throws java.io.IOException{
         file.seek(0);
-        file.writeLong(headAvaiList); //8
-        file.writeLong(rootArbolB); //8 
-        file.writeInt(posLlavePrimaria); //4
-        file.writeInt(posLlaveSecundaria); //4
-        file.writeInt(campos.size()); //4
-        
+        file.writeLong(headAvaiList);
+        file.writeLong(rootArbolB);
+        file.writeInt(posLlavePrimaria);
+        file.writeInt(posLlaveSecundaria);
+        file.writeInt(campos.size());
         for (Campo c : campos) {
             file.writeUTF(c.getNombre());
             file.writeChar(c.getTipo());
@@ -35,7 +35,18 @@ public class Metadata {
             file.writeBoolean(c.isEsPrimaria());
             file.writeBoolean(c.isEsSecundaria());
         }
-        this.offsetInicio = file.getFilePointer();
+        
+        long bytesEscritos = file.getFilePointer();
+        if (bytesEscritos > TAMANIO_RESERVADO) {
+            throw new java.io.IOException("La metadata excede el espacio reservado "  + TAMANIO_RESERVADO);
+        }
+        
+        // Rellenar el resto del bloque reservado para no dejar basura del registro anterior
+        for (long i = bytesEscritos; i < TAMANIO_RESERVADO; i++) {
+            file.writeByte('#');
+        }
+        
+        this.offsetInicio = TAMANIO_RESERVADO;
     }
     
     public void cargar(java.io.RandomAccessFile file) throws java.io.IOException{
@@ -53,11 +64,10 @@ public class Metadata {
             int longitud = file.readInt();
             boolean esPrimaria = file.readBoolean();
             boolean esSecundaria = file.readBoolean();
-            
-            Campo c = new Campo(nombre, tipo, longitud, esPrimaria, esSecundaria);
-            this.campos.add(c);
+            this.campos.add(new Campo(nombre, tipo, longitud, esPrimaria, esSecundaria));
         }
-        this.offsetInicio = file.getFilePointer();
+        
+        this.offsetInicio = TAMANIO_RESERVADO;
     }
 
     public long getOffsetInicio() {

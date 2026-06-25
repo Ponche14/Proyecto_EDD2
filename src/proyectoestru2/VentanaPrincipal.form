@@ -248,9 +248,9 @@
                           <Component id="GuardarArchivoButton" pref="161" max="32767" attributes="0"/>
                           <Component id="CerrarArchivoButton" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace min="-2" pref="403" max="-2" attributes="0"/>
-                      <Component id="EstadoArchivoLabel" min="-2" pref="145" max="-2" attributes="0"/>
-                      <EmptySpace pref="71" max="32767" attributes="0"/>
+                      <EmptySpace min="-2" pref="205" max="-2" attributes="0"/>
+                      <Component id="EstadoArchivoLabel" min="-2" pref="262" max="-2" attributes="0"/>
+                      <EmptySpace pref="152" max="32767" attributes="0"/>
                   </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <EmptySpace max="32767" attributes="0"/>

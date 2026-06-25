@@ -253,9 +253,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(GuardarArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
                     .addComponent(CerrarArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addGap(403, 403, 403)
-                .addComponent(EstadoArchivoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(71, Short.MAX_VALUE))
+                .addGap(205, 205, 205)
+                .addComponent(EstadoArchivoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(152, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ArchivoPanelLayout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -556,7 +556,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         PanelPrincipal.addTab("Exportar", jPanel2);
 
         getContentPane().add(PanelPrincipal);
-        PanelPrincipal.setBounds(0, 0, 976, 995);
+        PanelPrincipal.setBounds(0, 0, 976, 604);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -604,11 +604,15 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         for (int i = 0;i<dbms.getListaCampos().size();i++) {
             dbms.getListaCampos().remove(i);
         }
+        
         if (dbms.isArchivoAbierto()) {
             if (dbms.cerrarArchivo()) {
                 javax.swing.JOptionPane.showMessageDialog(this, "Archivo cerrado de forma segura.");
                 actualizarEstadoArchivo(null);
                 ActualizarTabla();
+                
+                javax.swing.table.DefaultTableModel modeloCampos = (javax.swing.table.DefaultTableModel) TableCampos.getModel();
+                modeloCampos.setRowCount(0);
             }else{
                 javax.swing.JOptionPane.showMessageDialog(this, "No se pudo cerrar el archivo.");
             }
@@ -1176,7 +1180,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             File file = fileChooser.getSelectedFile();
             ManejadorArchivo dbms2 = new ManejadorArchivo();
             dbms2.abrirArchivo(file.getAbsolutePath());
-            arbolB.crossTree(dbms2.getMetadataActual().getRootArbolB(), file);
+            //arbolB.crossTree(dbms2.getMetadataActual().getRootArbolB(), file);
         }
 
     }//GEN-LAST:event_CruzarArchivosButtonMouseClicked
