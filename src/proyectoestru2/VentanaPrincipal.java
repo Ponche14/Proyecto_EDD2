@@ -308,6 +308,9 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             }
         });
 
+        CampoVariable.setBackground(new java.awt.Color(255, 255, 204));
+        CampoVariable.setFont(new java.awt.Font("Segoe UI", 1, 12)); // NOI18N
+        CampoVariable.setForeground(new java.awt.Color(0, 0, 0));
         CampoVariable.setText("Listar Campos");
         CampoVariable.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -338,13 +341,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         TableCampos.setBackground(new java.awt.Color(255, 255, 204));
         TableCampos.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Nombre", "Tipo", "Longitud", "Tipo de Llave"
             }
         ));
         jScrollPane1.setViewportView(TableCampos);
@@ -389,13 +389,13 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         RegistrosTable.setBackground(new java.awt.Color(255, 255, 204));
         RegistrosTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {},
+                {},
+                {},
+                {}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+
             }
         ));
         jScrollPane2.setViewportView(RegistrosTable);
