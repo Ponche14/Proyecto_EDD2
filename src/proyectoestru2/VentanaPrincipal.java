@@ -48,6 +48,14 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         CancelarCampoButtonFrame = new javax.swing.JButton();
         CrearCampoButtonFrame = new javax.swing.JButton();
         PanelPrincipal = new javax.swing.JTabbedPane();
+        ArchivoPanel = new javax.swing.JPanel();
+        EstadoArchivoLabel = new javax.swing.JLabel();
+        AbrirArchivoButton = new javax.swing.JButton();
+        CrearArchivoButton = new javax.swing.JButton();
+        CerrarArchivoButton = new javax.swing.JButton();
+        GuardarArchivoButton = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
         CampoPanel = new javax.swing.JPanel();
         CrearCampoButton = new javax.swing.JButton();
         CampoVariable = new javax.swing.JButton();
@@ -65,19 +73,11 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         ModificarRegistroButton = new javax.swing.JButton();
         ListarRegistroButton = new javax.swing.JButton();
         CruzarArchivosButton = new javax.swing.JButton();
-        jPanel2 = new javax.swing.JPanel();
+        ExportarPanel = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
         ExportarJSONButton = new javax.swing.JButton();
         ExportarXMLButton = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
-        ArchivoPanel = new javax.swing.JPanel();
-        EstadoArchivoLabel = new javax.swing.JLabel();
-        AbrirArchivoButton = new javax.swing.JButton();
-        CrearArchivoButton = new javax.swing.JButton();
-        CerrarArchivoButton = new javax.swing.JButton();
-        GuardarArchivoButton = new javax.swing.JButton();
-        jButton1 = new javax.swing.JButton();
-        jLabel1 = new javax.swing.JLabel();
 
         jPanel1.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -181,10 +181,120 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         );
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        getContentPane().setLayout(null);
 
         PanelPrincipal.setBackground(new java.awt.Color(204, 204, 204));
         PanelPrincipal.setForeground(new java.awt.Color(0, 0, 0));
+
+        ArchivoPanel.setBackground(new java.awt.Color(204, 204, 255));
+
+        EstadoArchivoLabel.setBackground(new java.awt.Color(204, 255, 255));
+        EstadoArchivoLabel.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
+        EstadoArchivoLabel.setForeground(new java.awt.Color(153, 153, 255));
+        EstadoArchivoLabel.setText("Estado");
+
+        AbrirArchivoButton.setBackground(new java.awt.Color(153, 255, 153));
+        AbrirArchivoButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        AbrirArchivoButton.setForeground(new java.awt.Color(0, 0, 0));
+        AbrirArchivoButton.setText("Abrir Archivo");
+        AbrirArchivoButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                AbrirArchivoButtonMouseClicked(evt);
+            }
+        });
+
+        CrearArchivoButton.setBackground(new java.awt.Color(153, 255, 153));
+        CrearArchivoButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        CrearArchivoButton.setForeground(new java.awt.Color(0, 0, 0));
+        CrearArchivoButton.setText("Crear Archivo");
+        CrearArchivoButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CrearArchivoButtonMouseClicked(evt);
+            }
+        });
+
+        CerrarArchivoButton.setBackground(new java.awt.Color(255, 102, 102));
+        CerrarArchivoButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        CerrarArchivoButton.setForeground(new java.awt.Color(0, 0, 0));
+        CerrarArchivoButton.setText("Cerrar Archivo");
+        CerrarArchivoButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                CerrarArchivoButtonMouseClicked(evt);
+            }
+        });
+
+        GuardarArchivoButton.setBackground(new java.awt.Color(255, 255, 153));
+        GuardarArchivoButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        GuardarArchivoButton.setForeground(new java.awt.Color(0, 0, 0));
+        GuardarArchivoButton.setText("Guardar Archivo !");
+        GuardarArchivoButton.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                GuardarArchivoButtonMouseClicked(evt);
+            }
+        });
+
+        jButton1.setBackground(new java.awt.Color(255, 0, 51));
+        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(0, 0, 0));
+        jButton1.setText("Salir de Sistema");
+        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton1MouseClicked(evt);
+            }
+        });
+
+        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/proyectoestru2/upload-and-download.png"))); // NOI18N
+
+        javax.swing.GroupLayout ArchivoPanelLayout = new javax.swing.GroupLayout(ArchivoPanel);
+        ArchivoPanel.setLayout(ArchivoPanelLayout);
+        ArchivoPanelLayout.setHorizontalGroup(
+            ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ArchivoPanelLayout.createSequentialGroup()
+                .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ArchivoPanelLayout.createSequentialGroup()
+                        .addGap(20, 20, 20)
+                        .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(CrearArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
+                            .addComponent(AbrirArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(GuardarArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
+                            .addComponent(CerrarArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(ArchivoPanelLayout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(EstadoArchivoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(ArchivoPanelLayout.createSequentialGroup()
+                                .addGap(150, 150, 150)
+                                .addComponent(jLabel1)
+                                .addGap(0, 199, Short.MAX_VALUE))))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ArchivoPanelLayout.createSequentialGroup()
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap())
+        );
+        ArchivoPanelLayout.setVerticalGroup(
+            ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(ArchivoPanelLayout.createSequentialGroup()
+                .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ArchivoPanelLayout.createSequentialGroup()
+                        .addGap(19, 19, 19)
+                        .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(EstadoArchivoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(AbrirArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
+                            .addComponent(CerrarArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(GuardarArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
+                            .addComponent(CrearArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(ArchivoPanelLayout.createSequentialGroup()
+                        .addGap(140, 140, 140)
+                        .addComponent(jLabel1)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+
+        PanelPrincipal.addTab("Archivos", ArchivoPanel);
 
         CampoPanel.setBackground(new java.awt.Color(204, 204, 255));
 
@@ -401,7 +511,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
 
         PanelPrincipal.addTab("Registros", RegistroPanel);
 
-        jPanel2.setLayout(null);
+        ExportarPanel.setLayout(null);
 
         jPanel3.setBackground(new java.awt.Color(204, 204, 255));
 
@@ -456,124 +566,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
                 .addGap(0, 323, Short.MAX_VALUE))
         );
 
-        jPanel2.add(jPanel3);
+        ExportarPanel.add(jPanel3);
         jPanel3.setBounds(0, 0, 968, 960);
 
-        PanelPrincipal.addTab("Exportar", jPanel2);
+        PanelPrincipal.addTab("Exportar", ExportarPanel);
 
-        ArchivoPanel.setBackground(new java.awt.Color(204, 204, 255));
-
-        EstadoArchivoLabel.setBackground(new java.awt.Color(204, 255, 255));
-        EstadoArchivoLabel.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
-        EstadoArchivoLabel.setForeground(new java.awt.Color(153, 153, 255));
-        EstadoArchivoLabel.setText("Estado");
-
-        AbrirArchivoButton.setBackground(new java.awt.Color(153, 255, 153));
-        AbrirArchivoButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        AbrirArchivoButton.setForeground(new java.awt.Color(0, 0, 0));
-        AbrirArchivoButton.setText("Abrir Archivo");
-        AbrirArchivoButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                AbrirArchivoButtonMouseClicked(evt);
-            }
-        });
-
-        CrearArchivoButton.setBackground(new java.awt.Color(153, 255, 153));
-        CrearArchivoButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        CrearArchivoButton.setForeground(new java.awt.Color(0, 0, 0));
-        CrearArchivoButton.setText("Crear Archivo");
-        CrearArchivoButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                CrearArchivoButtonMouseClicked(evt);
-            }
-        });
-
-        CerrarArchivoButton.setBackground(new java.awt.Color(255, 102, 102));
-        CerrarArchivoButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        CerrarArchivoButton.setForeground(new java.awt.Color(0, 0, 0));
-        CerrarArchivoButton.setText("Cerrar Archivo");
-        CerrarArchivoButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                CerrarArchivoButtonMouseClicked(evt);
-            }
-        });
-
-        GuardarArchivoButton.setBackground(new java.awt.Color(255, 255, 153));
-        GuardarArchivoButton.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        GuardarArchivoButton.setForeground(new java.awt.Color(0, 0, 0));
-        GuardarArchivoButton.setText("Guardar Archivo !");
-        GuardarArchivoButton.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                GuardarArchivoButtonMouseClicked(evt);
-            }
-        });
-
-        jButton1.setBackground(new java.awt.Color(255, 0, 51));
-        jButton1.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
-        jButton1.setForeground(new java.awt.Color(0, 0, 0));
-        jButton1.setText("Salir de Sistema");
-        jButton1.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                jButton1MouseClicked(evt);
-            }
-        });
-
-        jLabel1.setIcon(new javax.swing.ImageIcon(getClass().getResource("/proyectoestru2/upload-and-download.png"))); // NOI18N
-
-        javax.swing.GroupLayout ArchivoPanelLayout = new javax.swing.GroupLayout(ArchivoPanel);
-        ArchivoPanel.setLayout(ArchivoPanelLayout);
-        ArchivoPanelLayout.setHorizontalGroup(
-            ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ArchivoPanelLayout.createSequentialGroup()
-                .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ArchivoPanelLayout.createSequentialGroup()
-                        .addGap(20, 20, 20)
-                        .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(CrearArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, 164, Short.MAX_VALUE)
-                            .addComponent(AbrirArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(GuardarArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, 161, Short.MAX_VALUE)
-                            .addComponent(CerrarArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(ArchivoPanelLayout.createSequentialGroup()
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                .addComponent(EstadoArchivoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 262, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(ArchivoPanelLayout.createSequentialGroup()
-                                .addGap(150, 150, 150)
-                                .addComponent(jLabel1)
-                                .addGap(0, 199, Short.MAX_VALUE))))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ArchivoPanelLayout.createSequentialGroup()
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 162, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap())
-        );
-        ArchivoPanelLayout.setVerticalGroup(
-            ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(ArchivoPanelLayout.createSequentialGroup()
-                .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(ArchivoPanelLayout.createSequentialGroup()
-                        .addGap(19, 19, 19)
-                        .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(EstadoArchivoLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 30, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(AbrirArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, 68, Short.MAX_VALUE)
-                            .addComponent(CerrarArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(ArchivoPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(GuardarArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, 71, Short.MAX_VALUE)
-                            .addComponent(CrearArchivoButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addGroup(ArchivoPanelLayout.createSequentialGroup()
-                        .addGap(140, 140, 140)
-                        .addComponent(jLabel1)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 122, Short.MAX_VALUE)
-                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 67, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
-        );
-
-        PanelPrincipal.addTab("Archivos", ArchivoPanel);
-
-        getContentPane().add(PanelPrincipal);
-        PanelPrincipal.setBounds(0, 0, 968, 626);
+        getContentPane().add(PanelPrincipal, java.awt.BorderLayout.CENTER);
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
@@ -1328,6 +1326,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
     }
     
+    
+    
     private void sincronizarArchivoATablas() {
         if (!dbms.isArchivoAbierto()) {
             return;
@@ -1424,6 +1424,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton EliminarCampoButton;
     private javax.swing.JLabel EstadoArchivoLabel;
     private javax.swing.JButton ExportarJSONButton;
+    private javax.swing.JPanel ExportarPanel;
     private javax.swing.JButton ExportarXMLButton;
     private javax.swing.JButton GuardarArchivoButton;
     private javax.swing.JButton InsertarRegistroButton;
@@ -1445,7 +1446,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
-    private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
