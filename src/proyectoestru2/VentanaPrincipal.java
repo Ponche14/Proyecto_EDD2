@@ -18,10 +18,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     private Nodo head = new Nodo(null, null, null);
     
     public VentanaPrincipal() {
-     initComponents();
+        initComponents();
         
+        setResizable(false);
+        setLocationRelativeTo(null);
         actualizarEstadoArchivo(null);
-        
+              
         ActualizarTablaCampos();
         RegistrosTable.setDefaultEditor(Object.class, null);
         TableCampos.setDefaultEditor(Object.class, null);
@@ -721,6 +723,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         char tipo;
         boolean esPrimaria = PrimariaCampoCheckBox.isSelected(); 
         boolean esSecundaria = SecundariaCampoCheckBox.isSelected();
+        if (esPrimaria) {
+            for (Campo c : dbms.getListaCampos()) {
+                if (c.isEsPrimaria()) {
+                    javax.swing.JOptionPane.showMessageDialog(CrearCampoFrame,
+                        "Ya existe una llave primaria (" + c.getNombre() + "). Solo puede haber una.",
+                        "Llave primaria duplicada", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            }
+        }
         String nombreTipo = TipoCampoComboBox.getSelectedItem().toString();
         int longitud = 30; 
 
@@ -804,6 +816,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             javax.swing.JOptionPane.showMessageDialog(this, "Se debe seleccionar un campo de la tabla para modificar", "Ningún campo seleccionado", javax.swing.JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+        
         if (dbms.hayRegistrosActivos()) {
             javax.swing.JOptionPane.showMessageDialog(this,
                 "No se pueden modificar campos porque el archivo ya tiene registros guardados.",
@@ -970,6 +983,16 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             if (entradaUsuario.length() > longitudMaxima) {
                 entradaUsuario = entradaUsuario.substring(0, longitudMaxima);
             }
+            if (entradaUsuario.length() > longitudMaxima) {
+                entradaUsuario = entradaUsuario.substring(0, longitudMaxima);
+            }
+
+            if (cp.isEsPrimaria() && dbms.existeLlavePrimaria(entradaUsuario, i)) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Ya existe un registro con esa llave primaria " + entradaUsuario,
+                    "Llave duplicada", javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
             
             if (i > 0) {
                 registroEstructurado.append(ManejadorArchivo.DELIMITADOR);
@@ -1025,7 +1048,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             return;
         }
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
-        String llavePrimaria = modelo.getValueAt(filaSeleccionada, 0).toString();
+        int columnaLlave = dbms.obtenerPosicionLlavePrimaria();
+        if (columnaLlave == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "El archivo no tiene ningún campo marcado como llave primaria.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String llavePrimaria = modelo.getValueAt(filaSeleccionada, columnaLlave).toString();
 
         int confirmar = javax.swing.JOptionPane.showConfirmDialog(this, 
             "¿Estás seguro de que deseas eliminar el registro con llave: " + llavePrimaria + "?", 
@@ -1057,8 +1085,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             return;
         }
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
-        String llavePrimaria = modelo.getValueAt(filaSeleccionada, 0).toString().trim();
-
+        int columnaLlave = dbms.obtenerPosicionLlavePrimaria();
+        if (columnaLlave == -1) {
+            javax.swing.JOptionPane.showMessageDialog(this, "El archivo no tiene ningún campo marcado como llave primaria.", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String llavePrimaria = modelo.getValueAt(filaSeleccionada, columnaLlave).toString().trim();
         java.util.ArrayList<Campo> camposActuales = dbms.getMetadataActual().getCampos();
         StringBuilder registroEstructurado = new StringBuilder();
 
@@ -1067,7 +1099,7 @@ public class VentanaPrincipal extends javax.swing.JFrame {
             String valorActual = modelo.getValueAt(filaSeleccionada, i).toString();
 
             String nuevoValor;
-            if (i == 0) {
+            if (i == columnaLlave) {
                 // La llave primaria se usa para localizar el registro en el
                 // archivo y no se debe modificar aqui.
                 nuevoValor = valorActual;

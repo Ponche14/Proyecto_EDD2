@@ -180,13 +180,13 @@
             Llave promotedKey = fullChild.getKeys()[splitPoint];// la llave que seria promovida al padre
             int rightKeys = fullChild.getNumKeys() - splitPoint -1;//La cantidad de llaves que vamos a mover para el hijo nuevo
             
-            for (int i = 0; i <= rightKeys; i++) {
+            for (int i = 0; i < rightKeys; i++) {
                 newChild.getKeys()[i] = fullChild.getKeys()[splitPoint+1+i];//movemos las llaves de el hijo lleno a la nueva llave
                 fullChild.getKeys()[i+splitPoint+1] = null;//se eliminan las llaves de el nodo que estaba lleno
             }
             
             if (!fullChild.isLeaf()) {//verifica si el nodo que estaba lleno es hoja, si no lo es
-                for (int i = 0; i <= rightKeys;i++) {
+                for (int i = 0; i < rightKeys;i++) {
                     newChild.getChildren()[i] = fullChild.getChildren()[splitPoint+1+i];//movemos tambien los hijos como se hizo con las llaves
                     fullChild.getChildren()[i+splitPoint+1] = null;
                 }

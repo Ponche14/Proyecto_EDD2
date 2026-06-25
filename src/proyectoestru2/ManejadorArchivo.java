@@ -131,12 +131,11 @@ public class ManejadorArchivo {
             this.archivoActual.seek(metadataActual.getOffsetInicio()); 
             String linea;
             long posicionRegistro;
-
+            int posicionLlave = obtenerPosicionLlavePrimaria();
             while ((linea = this.archivoActual.readLine()) != null) {
                 posicionRegistro = this.archivoActual.getFilePointer() - (linea.length() + 1);
-
                 String[] partes = linea.split(java.util.regex.Pattern.quote(String.valueOf(DELIMITADOR)), -1);
-                if (!linea.startsWith("*") && partes.length > 0 && partes[0].equals(llaveABorrar)) {
+                    if (!linea.startsWith("*") && posicionLlave >= 0 && posicionLlave < partes.length && partes[posicionLlave].equals(llaveABorrar)) {
                     int tamanoEspacio = linea.length() + 1;
                     availListActual.Insertar(posicionRegistro, tamanoEspacio);
                     availListActual.guardarEnArchivo(archivoActual, metadataActual);
@@ -156,11 +155,11 @@ public class ManejadorArchivo {
             this.archivoActual.seek(metadataActual.getOffsetInicio()); 
             String linea;
             long posicionRegistro;
-
+            int posicionLlave = obtenerPosicionLlavePrimaria();
             while ((linea = this.archivoActual.readLine()) != null) {
                 posicionRegistro = this.archivoActual.getFilePointer() - (linea.length() + 1);
                 String[] partes = linea.split(java.util.regex.Pattern.quote(String.valueOf(DELIMITADOR)), -1);
-                if (!linea.startsWith("*") && partes.length > 0 && partes[0].equals(llaveAModificar)) {
+                if (!linea.startsWith("*") && posicionLlave >= 0 && posicionLlave < partes.length && partes[posicionLlave].equals(llaveAModificar)) {
                     int tamanoMaximoSlot = linea.length();//Espacio sin el \n
                     int tamanoNuevoES = nuevoRegistroCompleto.length();
                     if (tamanoNuevoES <= tamanoMaximoSlot) {
@@ -222,6 +221,41 @@ public class ManejadorArchivo {
         }
     }
 
+    public boolean existeLlavePrimaria(String valorLlave, int posicionLlavePrimaria){
+        try {
+            if (archivoActual == null || metadataActual == null) {
+                return false;
+            }
+            long posicionOriginal = archivoActual.getFilePointer();
+            archivoActual.seek(metadataActual.getOffsetInicio());
+            String linea;
+            boolean encontrado = false;
+            while ((linea = archivoActual.readLine()) != null) {
+                if (!linea.startsWith("*") && !linea.trim().isEmpty()) {
+                    String[] valores = linea.split(java.util.regex.Pattern.quote(String.valueOf(DELIMITADOR)), -1);
+                    if (posicionLlavePrimaria < valores.length && valores[posicionLlavePrimaria].equals(valorLlave)) {
+                        encontrado = true;
+                        break;
+                    }
+                }
+            }
+            archivoActual.seek(posicionOriginal);
+            return encontrado;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
+    public int obtenerPosicionLlavePrimaria() {
+        java.util.ArrayList<Campo> campos = metadataActual.getCampos();
+        for (int i = 0; i < campos.size(); i++) {
+            if (campos.get(i).isEsPrimaria()) {
+                return i;
+            }
+        }
+        return -1;
+    }
+           
     public RandomAccessFile getArchivoActual() {
         return archivoActual;
     }
