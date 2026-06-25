@@ -23,6 +23,8 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         actualizarEstadoArchivo(null);
         
         ActualizarTablaCampos();
+        RegistrosTable.setDefaultEditor(Object.class, null);
+        TableCampos.setDefaultEditor(Object.class, null);
     }
 
     /**
@@ -601,23 +603,18 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_AbrirArchivoButtonMouseClicked
 
     private void CerrarArchivoButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CerrarArchivoButtonMouseClicked
-        for (int i = 0;i<dbms.getListaCampos().size();i++) {
-            dbms.getListaCampos().remove(i);
-        }
-        
+        dbms.getListaCampos().clear();
         if (dbms.isArchivoAbierto()) {
             if (dbms.cerrarArchivo()) {
                 javax.swing.JOptionPane.showMessageDialog(this, "Archivo cerrado de forma segura.");
                 actualizarEstadoArchivo(null);
-                ActualizarTabla();
-                
-                javax.swing.table.DefaultTableModel modeloCampos = (javax.swing.table.DefaultTableModel) TableCampos.getModel();
-                modeloCampos.setRowCount(0);
-            }else{
+                ActualizarTabla();        // limpia RegistrosTable
+                ActualizarTablaCampos();  // limpia TableCampos
+            } else {
                 javax.swing.JOptionPane.showMessageDialog(this, "No se pudo cerrar el archivo.");
             }
-        }else{
-            javax.swing.JOptionPane.showMessageDialog(this, "No hay ningún archivo abierto actualmente.");
+        } else {
+        javax.swing.JOptionPane.showMessageDialog(this, "No hay ningún archivo abierto actualmente.");
         }
     }//GEN-LAST:event_CerrarArchivoButtonMouseClicked
 
@@ -625,6 +622,10 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
         modelo.setColumnCount(0);
         modelo.setRowCount(0);
+        
+        if (dbms.getMetadataActual() == null) {
+        return; //
+        }
 
         java.util.ArrayList<Campo> camposCargados = dbms.getMetadataActual().getCampos();
         for (Campo c : camposCargados) {
@@ -693,6 +694,12 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_CancelarCampoButtonFrameMouseClicked
 
     private void CrearCampoButtonFrameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CrearCampoButtonFrameMouseClicked
+        if (dbms.isArchivoAbierto() && dbms.hayRegistrosActivos()) {
+            javax.swing.JOptionPane.showMessageDialog(CrearCampoFrame,
+                "No se pueden crear campos nuevos porque el archivo ya tiene registros guardados",
+                "Operación no permitida", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
         String nombre = NombreCampoTextField.getText().trim();
         if (nombre.isEmpty()) {
             javax.swing.JOptionPane.showMessageDialog(CrearCampoFrame, "El nombre del campo no puede estar vacio", "Error (No hay nombre)" , javax.swing.JOptionPane.ERROR_MESSAGE);
@@ -781,10 +788,56 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         }
         int fila = TableCampos.getSelectedRow();
         if (fila == -1) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Se debe seleccionar un campo de la tabla para modificar", "Ningun campo seleccionado", javax.swing.JOptionPane.INFORMATION_MESSAGE);
+            javax.swing.JOptionPane.showMessageDialog(this, "Se debe seleccionar un campo de la tabla para modificar", "Ningún campo seleccionado", javax.swing.JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+        if (dbms.hayRegistrosActivos()) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "No se pueden modificar campos porque el archivo ya tiene registros guardados.",
+                "Operacion no permitida", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
         Campo campoAModificar = dbms.getListaCampos().get(fila);
+
+        String nuevoNombre = javax.swing.JOptionPane.showInputDialog(this,
+            "Nuevo nombre del campo:", campoAModificar.getNombre());
+        if (nuevoNombre == null) {
+            return; // cancelado
+        }
+        nuevoNombre = nuevoNombre.trim();
+        if (nuevoNombre.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "El nombre no puede estar vacío", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        for (Campo c : dbms.getListaCampos()) {
+            if (c != campoAModificar && c.getNombre().equalsIgnoreCase(nuevoNombre)) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Ya existe un campo con ese nombre", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+
+        String nuevaLongitudStr = javax.swing.JOptionPane.showInputDialog(this,
+            "Nueva longitud máxima del campo:", String.valueOf(campoAModificar.getLongitud()));
+        if (nuevaLongitudStr == null) {
+            return;
+        }
+        int nuevaLongitud;
+        try {
+            nuevaLongitud = Integer.parseInt(nuevaLongitudStr.trim());
+            if (nuevaLongitud <= 0) {
+                throw new NumberFormatException();
+            }
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "La longitud debe ser un numero entero positivo", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        campoAModificar.setNombre(nuevoNombre);
+        campoAModificar.setLongitud(nuevaLongitud);
+
+        ActualizarTablaCampos();
+        javax.swing.JOptionPane.showMessageDialog(this, "Campo modificado con éxito.");
         
     }//GEN-LAST:event_ModificarCampoButtonMouseClicked
 
@@ -993,11 +1046,6 @@ public class VentanaPrincipal extends javax.swing.JFrame {
         javax.swing.table.DefaultTableModel modelo = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
         String llavePrimaria = modelo.getValueAt(filaSeleccionada, 0).toString().trim();
 
-        // Mismo origen de campos y mismo esquema de codificacion que usa
-        // InsertarRegistroButtonMouseClicked: cada campo se trunca o se rellena
-        // con espacios hasta su longitud declarada. Antes este metodo armaba el
-        // registro separado por comas, lo que dejaba el archivo con dos formatos
-        // distintos segun la ruta usada (insertar vs modificar).
         java.util.ArrayList<Campo> camposActuales = dbms.getMetadataActual().getCampos();
         StringBuilder registroEstructurado = new StringBuilder();
 

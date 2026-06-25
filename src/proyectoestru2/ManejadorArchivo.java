@@ -44,6 +44,7 @@ public class ManejadorArchivo {
             this.archivoActual = new RandomAccessFile(f, "rw");
             this.metadataActual = new Metadata();
             this.metadataActual.cargar(archivoActual);
+            this.listaCampos = metadataActual.getCampos();
             
             //Cargar los espacios disponibles en la memoria
             this.availListActual = new AvailList();
@@ -196,6 +197,28 @@ public class ManejadorArchivo {
             return this.archivoActual.readLine();
         } catch (Exception e) {
             return null;
+        }
+    }
+    
+    public boolean hayRegistrosActivos() {
+        try {
+            if (archivoActual == null || metadataActual == null) {
+                return false;
+            }
+            long posicionOriginal = archivoActual.getFilePointer();
+            archivoActual.seek(metadataActual.getOffsetInicio());
+            String linea;
+            boolean encontrado = false;
+            while ((linea = archivoActual.readLine()) != null) {
+                if (!linea.startsWith("*") && !linea.trim().isEmpty()) {
+                    encontrado = true;
+                    break;
+                }
+            }
+            archivoActual.seek(posicionOriginal);
+            return encontrado;
+        } catch (Exception e) {
+            return false;
         }
     }
 
