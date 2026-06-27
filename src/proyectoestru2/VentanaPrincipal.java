@@ -1236,36 +1236,101 @@ public class VentanaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_ExportarXMLButtonMouseClicked
 
     private void CargarRegistrosPruebaButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CargarRegistrosPruebaButtonMouseClicked
-//        JFileChooser fileChooser = new JFileChooser();
-//        int validacion = fileChooser.showOpenDialog(null);
-//        StringBuilder registroPrueba = new StringBuilder();
-//        if (validacion == JFileChooser.APPROVE_OPTION) {
-//            if(!dbms.isArchivoAbierto()){
-//                JOptionPane.showMessageDialog(null, "No hay archivos abiertos");
-//            } else {
-//                for (int i = 0; i < dbms.getListaCampos().size();i++) {
-//                    switch(dbms.getListaCampos().get(i).getTipo()){
-//                        case 'S':
-//                            registroPrueba.append("String ");
-//                            break;
-//                        case 'I':
-//                            registroPrueba.append("1000 ");
-//                            break;
-//                        case 'F':
-//                            registroPrueba.append("1000 ");
-//                            break;
-//                        case 'C':
-//                            registroPrueba.append("A ");
-//                            break;
-//                        default:
-//                            registroPrueba.append("Prueba ");
-//                            break;
-//                    }
-//                    dbms.escribirRegistro(registroPrueba.toString());
-//                }
-//            }
-//            
-//        }
+        BTree arbolPrueba = new BTree();
+        ManejadorArchivo dbmsPrueba = new ManejadorArchivo();
+        dbmsPrueba.crearArchivo("Prueba");
+        for (int i = 0; i < 10000; i++) {
+            java.util.ArrayList<Campo> listaCamposActuales = dbms.getMetadataActual().getCampos();
+            StringBuilder registroEstructurado = new StringBuilder();
+            Object[] filaTabla = new Object[listaCamposActuales.size()];
+
+            for (int j = 0; j < listaCamposActuales.size(); j++) {
+                Campo cp = dbms.getListaCampos().get(j); 
+                int longitudMaxima = cp.getLongitud(); 
+                String registroPrueba = "";
+                
+                switch (cp.getTipo()){
+                    case 'S':
+                        registroPrueba = "StringPrueba";
+                        break;
+                    case 'I':
+                        registroPrueba += i;
+                        break;
+                    case 'C':
+                        registroPrueba += 'C';
+                        break;
+                    case 'F':
+                        registroPrueba += i;
+                        break;
+                    default: 
+                        registroPrueba += i;
+                }
+
+                if (registroPrueba == null) {
+                    return; 
+                }
+
+                if (registroPrueba.contains(";")) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "El valor no puede contener ';'", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (registroPrueba.trim().isEmpty()) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "El campo no puede estar vacio", "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (registroPrueba.length() > longitudMaxima) {
+                    registroPrueba = registroPrueba.substring(0, longitudMaxima);
+                }
+                if (registroPrueba.length() > longitudMaxima) {
+                    registroPrueba = registroPrueba.substring(0, longitudMaxima);
+                }
+
+                if (cp.isEsPrimaria() && dbms.existeLlavePrimaria(registroPrueba, i)) {
+                    javax.swing.JOptionPane.showMessageDialog(this,
+                        "Ya existe un registro con esa llave primaria " + registroPrueba,
+                        "Llave duplicada", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if (j > 0) {
+                    registroEstructurado.append(ManejadorArchivo.DELIMITADOR);
+                }
+                registroEstructurado.append(registroPrueba);
+                filaTabla[j] = registroPrueba;
+                
+                try {
+                    Long posicionEscrita = dbmsPrueba.escribirRegistro(registroEstructurado.toString());
+
+                    if (posicionEscrita != null) {
+                        // Buscar el valor del campo marcado como llave primaria para indexarlo
+                        // (antes se indexaba el registro completo, lo cual no tiene sentido).
+                        Comparable valorLlavePrimaria = null;
+                        for (int k = 0; k < listaCamposActuales.size(); k++) {
+                            if (listaCamposActuales.get(k).isEsPrimaria()) {
+                                valorLlavePrimaria = (Comparable) filaTabla[k];
+                                break;
+                            }
+                        }
+
+                        if (valorLlavePrimaria != null) {
+                            arbolPrueba.insert(new Llave(valorLlavePrimaria, posicionEscrita));
+                        } else {
+                            System.out.println("No se escribio el archivo al arbol");
+                        }
+
+                        javax.swing.table.DefaultTableModel modeloRegistros = (javax.swing.table.DefaultTableModel) RegistrosTable.getModel();
+                        modeloRegistros.addRow(filaTabla);
+                    } else {
+                        javax.swing.JOptionPane.showMessageDialog(this, 
+                            "El registro no se pudo escribir en el archivo.", 
+                            "Error", javax.swing.JOptionPane.ERROR_MESSAGE);
+                    }       
+                } catch (Exception e) {
+                    javax.swing.JOptionPane.showMessageDialog(this, 
+                        "Ocurrio un error al procesar el archivo: " + e.getMessage(), 
+                        "Error de Archivo", javax.swing.JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        }
     }//GEN-LAST:event_CargarRegistrosPruebaButtonMouseClicked
 
     private void CruzarArchivosButtonMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_CruzarArchivosButtonMouseClicked
